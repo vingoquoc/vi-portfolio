@@ -1154,7 +1154,7 @@ function DynamicPortfolio() {
                     </div>
 
                     {/* Education Card */}
-                    <div className={`w-full lg:w-5/12 ${index % 2 === 0 ? 'lg:pr-12' : 'lg:pl-12'}`}>
+                    <div className={`w-full lg:w-6/12 ${index % 2 === 0 ? 'lg:pr-8' : 'lg:pl-8'}`}>
                       <div className={`group relative overflow-hidden rounded-2xl transition-all duration-500 hover:scale-105 hover:shadow-2xl ${
                         isDark 
                           ? 'bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border border-gray-600 hover:border-blue-400' 
@@ -1191,9 +1191,9 @@ function DynamicPortfolio() {
                             </div>
                             
                             {/* Year Badge */}
-                            <div className={`px-4 py-2 rounded-xl text-sm font-bold ${
+                            <div className={`px-4 py-2 rounded-xl text-sm font-bold min-w-[120px] text-center ${
                               isDark ? 'bg-gray-700 text-gray-300 border border-gray-600' : 'bg-gray-100 text-gray-700 border border-gray-200'
-                            } backdrop-blur-sm`}>
+                            } backdrop-blur-sm whitespace-nowrap`}>
                               {edu.startDate?.split('-')[0]} - {edu.endDate?.split('-')[0] || 'Present'}
                             </div>
                           </div>
@@ -1242,7 +1242,7 @@ function DynamicPortfolio() {
                                 <span>Key Achievements</span>
                               </h4>
                               <div className="space-y-2">
-                                {edu.achievements.map((achievement, achievementIndex) => (
+                                {edu.achievements.slice(0, 2).map((achievement, achievementIndex) => (
                                   <div 
                                     key={achievementIndex} 
                                     className={`flex items-start space-x-3 p-3 rounded-lg ${
@@ -1354,7 +1354,7 @@ function DynamicPortfolio() {
                   </div>
 
                   {/* Experience Card */}
-                  <div className={`w-full lg:w-5/12 ${index % 2 === 0 ? 'lg:pr-12' : 'lg:pl-12'}`}>
+                  <div className={`w-full lg:w-6/12 ${index % 2 === 0 ? 'lg:pr-8' : 'lg:pl-8'}`}>
                     <div className={`group relative overflow-hidden rounded-3xl transition-all duration-500 hover:scale-105 hover:shadow-2xl ${
                       isDark 
                         ? 'bg-gradient-to-br from-gray-800/90 via-gray-700/90 to-gray-800/90 border border-gray-600 hover:border-indigo-400' 
@@ -1423,12 +1423,12 @@ function DynamicPortfolio() {
                             <span>{exp.company}</span>
                           </div>
                           <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} flex items-center space-x-2`}>
-                            <BiLocationPlus className="w-4 h-4" />
-                            <span>{exp.location}</span>
+                            <BiLocationPlus className="w-4 h-4 flex-shrink-0" />
+                            <span className="whitespace-nowrap">{exp.location}</span>
                           </div>
                           <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} flex items-center space-x-2`}>
-                            <MdDateRange className="w-4 h-4" />
-                            <span>
+                            <MdDateRange className="w-4 h-4 flex-shrink-0" />
+                            <span className="whitespace-nowrap">
                               {new Date(exp.start_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - {' '}
                               {exp.end_date ? new Date(exp.end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present'}
                             </span>
@@ -1470,7 +1470,7 @@ function DynamicPortfolio() {
                               <span>Key Achievements</span>
                             </h4>
                             <div className="space-y-3">
-                              {exp.achievements.map((achievement, achievementIndex) => (
+                              {exp.achievements.slice(0, 2).map((achievement, achievementIndex) => (
                                 <div 
                                   key={achievementIndex} 
                                   className={`flex items-start space-x-4 p-4 rounded-xl ${
@@ -1523,13 +1523,21 @@ function DynamicPortfolio() {
       {/* Projects Section */}
       <section id="projects" className={`py-20 ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className={`text-4xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Featured Projects
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 mb-8 shadow-2xl">
+              <FaRocket className="w-12 h-12 text-white" />
+            </div>
+            <h2 className={`text-6xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'} tracking-tight`}>
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Featured Projects
+              </span>
             </h2>
-            <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'} max-w-2xl mx-auto`}>
+            <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto leading-relaxed font-light`}>
               Some of the projects I've worked on recently
             </p>
+            <div className="mt-8 flex justify-center">
+              <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -1680,20 +1688,36 @@ function DynamicPortfolio() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className={`py-20 ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className={`text-4xl font-bold mb-8 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            Let's Work Together
-          </h2>
-          
-          <p className={`text-lg mb-12 ${isDark ? 'text-gray-400' : 'text-gray-600'} max-w-2xl mx-auto`}>
-            I'm always interested in new opportunities and exciting projects. 
-            Let's discuss how we can bring your ideas to life!
-          </p>
+      <section id="contact" className={`py-20 relative overflow-hidden ${isDark ? 'bg-gradient-to-br from-gray-900 via-indigo-900/20 to-purple-900/20' : 'bg-gray-50'}`}>
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className={`absolute top-1/4 right-1/4 w-80 h-80 rounded-full opacity-10 ${isDark ? 'bg-indigo-500' : 'bg-indigo-300'} blur-3xl animate-pulse`}></div>
+          <div className={`absolute bottom-1/4 left-1/4 w-72 h-72 rounded-full opacity-10 ${isDark ? 'bg-purple-500' : 'bg-purple-300'} blur-3xl animate-pulse`} style={{animationDelay: '2s'}}></div>
+          <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-5 ${isDark ? 'bg-pink-500' : 'bg-pink-300'} blur-3xl animate-spin`} style={{animationDuration: '40s'}}></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="mb-20">
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 mb-8 shadow-2xl">
+              <FaEnvelope className="w-12 h-12 text-white" />
+            </div>
+            <h2 className={`text-6xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'} tracking-tight`}>
+              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Let's Work Together
+              </span>
+            </h2>
+            <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto leading-relaxed font-light`}>
+              I'm always interested in new opportunities and exciting projects. 
+              Let's discuss how we can bring your ideas to life!
+            </p>
+            <div className="mt-8 flex justify-center">
+              <div className="w-24 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></div>
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div className={`p-6 rounded-xl ${isDark ? 'bg-gray-900' : 'bg-white'} shadow-lg hover:shadow-xl transition-all duration-300`}>
-              <FaEnvelope className="text-3xl text-blue-500 mx-auto mb-4" />
+              <MdEmail className="text-3xl text-blue-500 mx-auto mb-4" />
               <h3 className={`font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Email</h3>
               <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
                 {profileData?.email}
@@ -1732,10 +1756,10 @@ function DynamicPortfolio() {
       {/* Footer */}
       <footer className={`py-8 border-t ${isDark ? 'bg-gray-900 border-gray-800 text-gray-400' : 'bg-white border-gray-200 text-gray-600'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p>&copy; 2025 {profileData?.first_name || 'Nguyen Quoc'} {profileData?.last_name || 'Vi'}. All rights reserved.</p>
-          <p className="mt-2 text-sm">Built with React, Django, and lots of ☕</p>
+          <p>&copy; 2025 {profileData?.first_name || 'Ngo Quoc'} {profileData?.last_name || 'Vi'}. All rights reserved.</p>
+          <p className="mt-2 text-sm">Built with Copilot </p>
           <p className="mt-1 text-xs opacity-70">
-            Data updates every 30 seconds • Last updated: {lastUpdated?.toLocaleTimeString() || 'Loading...'}
+            Last updated: {lastUpdated?.toLocaleTimeString() || 'Loading...'}
           </p>
         </div>
       </footer>
