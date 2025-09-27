@@ -451,7 +451,7 @@ function DynamicPortfolio() {
                     <img 
                       src={getAssetPath(profileData.profile_image)} 
                       alt="Profile"
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover object-center transform group-hover:scale-110 transition-transform duration-300"
                     />
                   </div>
                 ) : (
@@ -574,7 +574,7 @@ function DynamicPortfolio() {
                   <img 
                     src={getAssetPath(profileData.profile_image)} 
                     alt="Profile"
-                    className="relative w-48 h-48 rounded-full mx-auto border-4 border-white shadow-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-700 transform"
+                    className="relative w-48 h-48 rounded-full mx-auto border-4 border-white shadow-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-700 transform object-cover object-center"
                   />
                   <div className="absolute inset-0 rounded-full border-4 border-dashed border-blue-400 animate-spin-slow opacity-30"></div>
                   <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center animate-bounce">
