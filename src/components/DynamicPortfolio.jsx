@@ -28,6 +28,12 @@ function DynamicPortfolio() {
   
   const apiService = ApiService
 
+  // Helper function to normalize paths for GitHub Pages
+  const getAssetPath = (path) => {
+    if (!path) return path
+    return path.startsWith('/') ? '.' + path : path
+  }
+
   // Initialize particles for background animation
   useEffect(() => {
     const initialParticles = Array.from({ length: 60 }, (_, i) => ({
@@ -229,7 +235,7 @@ function DynamicPortfolio() {
     if (skill.icon && skill.icon.startsWith('/icons/')) {
       return (
         <img 
-          src={skill.icon} 
+          src={getAssetPath(skill.icon)} 
           alt={skill.name} 
           className="w-6 h-6"
           style={{ filter: 'brightness(0) saturate(100%) invert(1)' }}
@@ -251,7 +257,7 @@ function DynamicPortfolio() {
     if (service.icon && service.icon.startsWith('/icons/')) {
       return (
         <img 
-          src={service.icon} 
+          src={getAssetPath(service.icon)} 
           alt={service.title} 
           className="w-6 h-6"
           style={{ filter: 'brightness(0) saturate(100%) invert(1)' }}
@@ -279,7 +285,7 @@ function DynamicPortfolio() {
     if (education.icon && education.icon.startsWith('/icons/')) {
       return (
         <img 
-          src={education.icon} 
+          src={getAssetPath(education.icon)} 
           alt={education.degree} 
           className="w-8 h-8"
           style={{ filter: isDark ? 'brightness(0) saturate(100%) invert(1)' : 'none' }}
@@ -440,7 +446,7 @@ function DynamicPortfolio() {
                 {profileData?.profile_image ? (
                   <div className="w-10 h-10 rounded-lg overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 border-2 border-white/20">
                     <img 
-                      src={profileData.profile_image} 
+                      src={getAssetPath(profileData.profile_image)} 
                       alt="Profile"
                       className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
                     />
@@ -563,7 +569,7 @@ function DynamicPortfolio() {
                 <div className="relative group">
                   <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 blur-2xl opacity-50 group-hover:opacity-75 transition-all duration-500 animate-pulse"></div>
                   <img 
-                    src={profileData.profile_image} 
+                    src={getAssetPath(profileData.profile_image)} 
                     alt="Profile"
                     className="relative w-48 h-48 rounded-full mx-auto border-4 border-white shadow-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-700 transform"
                   />
@@ -1562,7 +1568,7 @@ function DynamicPortfolio() {
                 <div className={`h-56 bg-gradient-to-r ${getProjectGradient(index)} relative overflow-hidden`}>
                   {project.image_url ? (
                     <img 
-                      src={project.image_url} 
+                      src={getAssetPath(project.image_url)} 
                       alt={project.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
