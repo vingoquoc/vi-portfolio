@@ -846,7 +846,7 @@ function DynamicPortfolio() {
               )}
               
               {/* Contact Info with enhanced styling */}
-              <div className="space-y-6">
+              {/*<div className="space-y-6">
                 {profileData?.email && (
                   <div className="flex items-center space-x-4 group hover:translate-x-2 transition-transform duration-300">
                     <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
@@ -888,7 +888,7 @@ function DynamicPortfolio() {
                     </div>
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
             
             {/* Enhanced Services Card */}
@@ -1647,7 +1647,7 @@ function DynamicPortfolio() {
                   </div>
 
                   {/* Project Stats */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                 {/* <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex items-center space-x-4 text-sm">
                       <span className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                         <FaStar className="inline mr-1 text-yellow-500" />
@@ -1679,7 +1679,7 @@ function DynamicPortfolio() {
                         </a>
                       )}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ))}

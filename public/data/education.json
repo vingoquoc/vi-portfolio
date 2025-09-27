@@ -18,7 +18,7 @@
       "System Analysis and Design",
       "Web Development Technologies"
     ],
-    "icon": "/icons/education/masters.png"
+    "icon": "/icons/education/degree.png"
   },
   {
     "id": 2,
@@ -38,6 +38,6 @@
       "Cloud Computing Architecture",
       "Advanced Database Systems"
     ],
-    "icon": "/icons/education/masters.png"
+    "icon": "/icons/education/degree.png"
   }
 ]

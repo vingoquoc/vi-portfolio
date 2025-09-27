@@ -16,7 +16,7 @@
       "Optimized data input workflows for medical professionals"
     ],
     "technologies": ["Swift", "iOS", "Objective-C", "Core Data", "HealthKit", "REST API", "Git"],
-    "company_logo": "/icons/experience/ios.png"
+    "company_logo": "/icons/experience/apple.png"
   },
   {
     "id": 2,
@@ -34,7 +34,7 @@
       "Designed user-friendly interface for end users"
     ],
     "technologies": ["Python", "TensorFlow", "OpenCV", "Flutter", "Firebase"],
-    "company_logo": "/icons/experience/ai.png"
+    "company_logo": "/icons/experience/ml.png"
   },
   {
     "id": 3,
@@ -70,6 +70,6 @@
       "Deployed application and provided user training to customers"
     ],
     "technologies": ["Flutter", "SQLite", "Provider", "Material Design"],
-    "company_logo": "/icons/experience/mobile.png"
+    "company_logo": "/icons/experience/android.png"
   }
 ]

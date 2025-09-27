@@ -3,56 +3,56 @@
     "id": 1,
     "category": "Mobile Development",
     "name": "Objective-C",
-    "level": 85,
-    "icon": "/icons/skills/objective-c.png"
+    "level": 90,
+    "icon": "/icons/skills/objc.png"
   },
   {
     "id": 2,
     "category": "Mobile Development", 
     "name": "Swift",
-    "level": 88,
+    "level": 60,
     "icon": "/icons/skills/swift.svg"
   },
   {
     "id": 3,
     "category": "Mobile Development",
     "name": "Flutter",
-    "level": 90,
+    "level": 80,
     "icon": "/icons/skills/flutter.svg"
   },
   {
     "id": 4,
     "category": "Backend",
     "name": "Laravel",
-    "level": 85,
+    "level": 70,
     "icon": "/icons/skills/laravel.png"
   },
   {
     "id": 5,
     "category": "Backend",
     "name": "Node.js",
-    "level": 82,
+    "level": 50,
     "icon": "/icons/skills/nodejs.svg"
   },
   {
     "id": 6,
     "category": "DevOps",
     "name": "Docker",
-    "level": 80,
+    "level": 75,
     "icon": "/icons/skills/docker.svg"
   },
   {
     "id": 7,
     "category": "Cloud",
     "name": "AWS",
-    "level": 75,
+    "level": 60,
     "icon": "/icons/skills/aws.png"
   },
   {
     "id": 8,
     "category": "DevOps",
     "name": "Git",
-    "level": 88,
+    "level": 80,
     "icon": "/icons/skills/git.png"
   },
   {
@@ -66,49 +66,49 @@
     "id": 10,
     "category": "Database",
     "name": "SQL Server",
-    "level": 82,
+    "level": 79,
     "icon": "/icons/skills/sql-server.png"
   },
   {
     "id": 11,
     "category": "Database",
     "name": "MongoDB",
-    "level": 78,
+    "level": 65,
     "icon": "/icons/skills/mongodb.png"
   },
   {
     "id": 12,
     "category": "Database",
     "name": "Firebase",
-    "level": 80,
+    "level": 55,
     "icon": "/icons/skills/firebase.png"
   },
   {
     "id": 13,
     "category": "Programming Language",
     "name": "Python",
-    "level": 82,
+    "level": 83,
     "icon": "/icons/skills/python.svg"
   },
   {
     "id": 14,
     "category": "AI & Machine Learning",
     "name": "AI/ML Research",
-    "level": 70,
+    "level": 82,
     "icon": "/icons/skills/ai-ml.png"
   },
   {
     "id": 15,
     "category": "Frontend",
     "name": "React",
-    "level": 88,
+    "level": 62,
     "icon": "/icons/skills/react.svg"
   },
   {
     "id": 16,
     "category": "Programming Language",
     "name": "JavaScript",
-    "level": 90,
+    "level": 78,
     "icon": "/icons/skills/javascript.svg"
   }
 ]
