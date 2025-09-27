@@ -19,7 +19,7 @@ class ApiService {
     try {
       // Add cache busting for fresh data
       const cacheBuster = new Date().getTime()
-      const response = await fetch(`/data/${filename}?v=${cacheBuster}`)
+      const response = await fetch(`./data/${filename}?v=${cacheBuster}`)
       
       if (!response.ok) {
         throw new Error(`Failed to load ${filename}: ${response.status}`)
