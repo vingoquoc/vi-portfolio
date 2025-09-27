@@ -11,14 +11,14 @@
     "category": "Mobile Development", 
     "name": "Swift",
     "level": 88,
-    "icon": "/icons/skills/swift.png"
+    "icon": "/icons/skills/swift.svg"
   },
   {
     "id": 3,
     "category": "Mobile Development",
     "name": "Flutter",
     "level": 90,
-    "icon": "/icons/skills/flutter.png"
+    "icon": "/icons/skills/flutter.svg"
   },
   {
     "id": 4,
@@ -32,14 +32,14 @@
     "category": "Backend",
     "name": "Node.js",
     "level": 82,
-    "icon": "/icons/skills/nodejs.png"
+    "icon": "/icons/skills/nodejs.svg"
   },
   {
     "id": 6,
     "category": "DevOps",
     "name": "Docker",
     "level": 80,
-    "icon": "/icons/skills/docker.png"
+    "icon": "/icons/skills/docker.svg"
   },
   {
     "id": 7,
@@ -88,7 +88,7 @@
     "category": "Programming Language",
     "name": "Python",
     "level": 82,
-    "icon": "/icons/skills/python.png"
+    "icon": "/icons/skills/python.svg"
   },
   {
     "id": 14,
@@ -96,5 +96,19 @@
     "name": "AI/ML Research",
     "level": 70,
     "icon": "/icons/skills/ai-ml.png"
+  },
+  {
+    "id": 15,
+    "category": "Frontend",
+    "name": "React",
+    "level": 88,
+    "icon": "/icons/skills/react.svg"
+  },
+  {
+    "id": 16,
+    "category": "Programming Language",
+    "name": "JavaScript",
+    "level": 90,
+    "icon": "/icons/skills/javascript.svg"
   }
 ]
