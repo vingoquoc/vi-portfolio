@@ -1,0 +1,100 @@
+[
+  {
+    "id": 1,
+    "category": "Mobile Development",
+    "name": "Objective-C",
+    "level": 85,
+    "icon": "/icons/skills/objective-c.png"
+  },
+  {
+    "id": 2,
+    "category": "Mobile Development", 
+    "name": "Swift",
+    "level": 88,
+    "icon": "/icons/skills/swift.png"
+  },
+  {
+    "id": 3,
+    "category": "Mobile Development",
+    "name": "Flutter",
+    "level": 90,
+    "icon": "/icons/skills/flutter.png"
+  },
+  {
+    "id": 4,
+    "category": "Backend",
+    "name": "Laravel",
+    "level": 85,
+    "icon": "/icons/skills/laravel.png"
+  },
+  {
+    "id": 5,
+    "category": "Backend",
+    "name": "Node.js",
+    "level": 82,
+    "icon": "/icons/skills/nodejs.png"
+  },
+  {
+    "id": 6,
+    "category": "DevOps",
+    "name": "Docker",
+    "level": 80,
+    "icon": "/icons/skills/docker.png"
+  },
+  {
+    "id": 7,
+    "category": "Cloud",
+    "name": "AWS",
+    "level": 75,
+    "icon": "/icons/skills/aws.png"
+  },
+  {
+    "id": 8,
+    "category": "DevOps",
+    "name": "Git",
+    "level": 88,
+    "icon": "/icons/skills/git.png"
+  },
+  {
+    "id": 9,
+    "category": "Database",
+    "name": "MySQL",
+    "level": 85,
+    "icon": "/icons/skills/mysql.png"
+  },
+  {
+    "id": 10,
+    "category": "Database",
+    "name": "SQL Server",
+    "level": 82,
+    "icon": "/icons/skills/sql-server.png"
+  },
+  {
+    "id": 11,
+    "category": "Database",
+    "name": "MongoDB",
+    "level": 78,
+    "icon": "/icons/skills/mongodb.png"
+  },
+  {
+    "id": 12,
+    "category": "Database",
+    "name": "Firebase",
+    "level": 80,
+    "icon": "/icons/skills/firebase.png"
+  },
+  {
+    "id": 13,
+    "category": "Programming Language",
+    "name": "Python",
+    "level": 82,
+    "icon": "/icons/skills/python.png"
+  },
+  {
+    "id": 14,
+    "category": "AI & Machine Learning",
+    "name": "AI/ML Research",
+    "level": 70,
+    "icon": "/icons/skills/ai-ml.png"
+  }
+]

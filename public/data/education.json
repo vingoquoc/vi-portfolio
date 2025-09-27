@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1,
+    "institution": "Can Tho University",
+    "degree": "Bachelor of Information Technology Engineering",
+    "field": "Information Technology",
+    "location": "Can Tho City, Vietnam",
+    "startDate": "2018-09-01",
+    "endDate": "2022-06-30",
+    "description": "Graduated with Engineer degree in Information Technology. Focused on software engineering, mobile application development, and database systems. Strong foundation in programming, data structures, and system design.",
+    "relevantCourses": [
+      "Mobile Application Development",
+      "Data Structures and Algorithms", 
+      "Software Engineering",
+      "Database Systems",
+      "Object-Oriented Programming",
+      "Computer Networks",
+      "System Analysis and Design",
+      "Web Development Technologies"
+    ],
+    "icon": "/icons/education/university.png"
+  },
+  {
+    "id": 2,
+    "institution": "Can Tho University",
+    "degree": "Master of Information Technology",
+    "field": "Information Technology",
+    "location": "Can Tho City, Vietnam",
+    "startDate": "2024-09-01",
+    "endDate": null,
+    "current": true,
+    "description": "Currently pursuing Master's degree in Information Technology with focus on advanced software engineering, research methodologies, and emerging technologies in mobile and web development.",
+    "relevantCourses": [
+      "Advanced Software Engineering",
+      "Research Methodology",
+      "Advanced Mobile Computing",
+      "Machine Learning Applications",
+      "Cloud Computing Architecture",
+      "Advanced Database Systems"
+    ],
+    "icon": "/icons/education/masters.png"
+  }
+]

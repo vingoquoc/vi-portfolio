@@ -1,0 +1,75 @@
+[
+  {
+    "id": 1,
+    "company": "Can Tho University Software Technology Center",
+    "position": "iOS Developer",
+    "location": "Can Tho, Vietnam",
+    "start_date": "2023-01-01",
+    "end_date": null,
+    "current": true,
+    "description": "Working as an iOS Developer in the ITO team developing data recording applications for Japanese healthcare clients. Responsible for programming and maintaining applications that focus on medical data entry and record management.",
+    "achievements": [
+      "Developed and maintained iOS data recording applications for Japanese healthcare market",
+      "Implemented robust data entry forms and validation systems",
+      "Built offline data synchronization and cloud backup features",
+      "Maintained application stability and performed regular updates",
+      "Optimized data input workflows for medical professionals"
+    ],
+    "technologies": ["Swift", "iOS", "Objective-C", "Core Data", "HealthKit", "REST API", "Git"],
+    "company_logo": "/icons/experience/ios.png"
+  },
+  {
+    "id": 2,
+    "company": "Freelance",
+    "position": "Personal Project",
+    "location": "Can Tho, Vietnam",
+    "start_date": "2022-09-01",
+    "end_date": "2022-12-31",
+    "current": false,
+    "description": "Developed a fruit recognition system to determine calorie content supporting dieters and athletes. Used AI and Machine Learning to analyze fruit images.",
+    "achievements": [
+      "Built AI model with 95% accuracy in fruit recognition",
+      "Integrated camera for real-time recognition",
+      "Developed database with nutritional information for 100+ fruit types",
+      "Designed user-friendly interface for end users"
+    ],
+    "technologies": ["Python", "TensorFlow", "OpenCV", "Flutter", "Firebase"],
+    "company_logo": "/icons/experience/ai.png"
+  },
+  {
+    "id": 3,
+    "company": "Appcore Trading Service Co., Ltd",
+    "position": "Flutter Developer Intern",
+    "location": "Ho Chi Minh City, Vietnam",
+    "start_date": "2022-05-01",
+    "end_date": "2022-07-31",
+    "current": false,
+    "description": "Internship in mobile app development with Flutter. Participated in 'Building Phong Vu e-commerce application' project.",
+    "achievements": [
+      "Developed UI/UX features for mobile applications",
+      "Integrated APIs and handled real-time data processing",
+      "Participated in code reviews and team meetings",
+      "Learned commercial app development processes"
+    ],
+    "technologies": ["Flutter", "Dart", "REST API", "Git", "Firebase"],
+    "company_logo": "/icons/experience/flutter.png"
+  },
+  {
+    "id": 4,
+    "company": "Freelance",
+    "position": "Personal Project",
+    "location": "Can Tho, Vietnam", 
+    "start_date": "2021-10-01",
+    "end_date": "2021-12-31",
+    "current": false,
+    "description": "Developed student management application for educational learning center. The app helps track student information, manage class schedules and grades.",
+    "achievements": [
+      "Designed database to store student and course information",
+      "Developed management interface for teachers and administrators",
+      "Integrated notification and class schedule reminder features",
+      "Deployed application and provided user training to customers"
+    ],
+    "technologies": ["Flutter", "SQLite", "Provider", "Material Design"],
+    "company_logo": "/icons/experience/mobile.png"
+  }
+]

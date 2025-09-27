@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "title": "Fruit Recognition System for Calorie Detection",
+    "description": "AI system using computer vision to recognize fruit types and automatically calculate calorie content, supporting dieters and athletes in nutrition tracking.",
+    "image_url": "/icons/projects/ai-fruit.png",
+    "technologies": ["Python", "TensorFlow", "OpenCV", "Flutter", "Firebase", "Machine Learning"],
+    "github_url": null,
+    "demo_url": null,
+    "featured": true,
+    "category": "AI/Machine Learning",
+    "start_date": "2022-09-01",
+    "end_date": "2022-12-31",
+    "status": "Completed"
+  },
+  {
+    "id": 2,
+    "title": "Phong Vu E-commerce Mobile Application",
+    "description": "Mobile e-commerce application built with Flutter for Phong Vu retail chain. Features include product catalog, shopping cart, payment processing and order management.",
+    "image_url": "/icons/projects/ecommerce.png", 
+    "technologies": ["Flutter", "Dart", "REST API", "Firebase", "Payment Gateway"],
+    "github_url": null,
+    "demo_url": null,
+    "featured": true,
+    "category": "Mobile Development",
+    "start_date": "2022-05-01",
+    "end_date": "2022-07-31", 
+    "status": "Completed"
+  },
+  {
+    "id": 3,
+    "title": "Student Management Application",
+    "description": "Mobile application for managing student information at educational learning centers. Includes student management, class schedules, grades and notifications.",
+    "image_url": "/icons/projects/student-management.png",
+    "technologies": ["Flutter", "SQLite", "Provider", "Material Design", "Local Storage"],
+    "github_url": null,
+    "demo_url": null,
+    "featured": true,
+    "category": "Mobile Development", 
+    "start_date": "2021-10-01",
+    "end_date": "2021-12-31",
+    "status": "Completed"
+  },
+  {
+    "id": 4,
+    "title": "Automated Attendance Security Camera System",
+    "description": "Research and development of camera-based system using facial recognition for automatic student attendance tracking, integrated with notification management system.",
+    "image_url": "/icons/projects/face-recognition.png",
+    "technologies": ["Python", "OpenCV", "Face Recognition", "Computer Vision", "Database"],
+    "github_url": null,
+    "demo_url": null,
+    "featured": false,
+    "category": "AI/Computer Vision",
+    "start_date": "2019-11-01", 
+    "end_date": "2020-12-31",
+    "status": "Completed"
+  }
+]

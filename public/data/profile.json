@@ -1,0 +1,39 @@
+{
+  "first_name": "Vi",
+  "last_name": "Ngo Quoc", 
+  "name": "Vi Ngo Quoc",
+  "title": "Mobile Developer",
+  "bio": "iOS Developer with a passion for AI research and development.",
+  "about": {
+    "title": "iOS Developer & AI Enthusiast",
+    "description": "iOS Developer with expertise in Swift and Objective-C. Passionate about AI research and machine learning integration in mobile applications. I enjoy creating innovative solutions that bridge technology with real-world problems.",
+    "highlights": [
+      "iOS Developer at Cantho University Software Center (2023-Present)",
+      "Expert in Swift, Objective-C and iOS ecosystem",
+      "AI/ML integration with Python, TensorFlow, OpenCV", 
+      "Cross-platform development with Flutter and Dart"
+    ],
+    "services": [
+      {
+        "icon": "/icons/services/ios-development.png",
+        "title": "iOS Development",
+        "description": "Native iOS application development using Swift and Objective-C, specializing in healthcare and data recording applications"
+      },
+      {
+        "icon": "/icons/services/ai-ml.png", 
+        "title": "AI & Machine Learning",
+        "description": "Computer vision and machine learning solutions using Python, TensorFlow, and OpenCV for real-world applications"
+      },
+      {
+        "icon": "/icons/services/flutter-development.png",
+        "title": "Flutter Development", 
+        "description": "Cross-platform mobile development with Flutter and Dart for efficient multi-platform solutions"
+      }
+    ]
+  },
+  "avatar": "/images/nqvi-avt-optimized.jpg",
+  "profile_image": "/images/nqvi-avt-optimized.jpg",
+  "email": "vingoquoc@gmail.com",
+  "phone": "+84 383176878",
+  "location": "Can Tho Vietnam"
+}
