@@ -2,7 +2,7 @@
   "first_name": "Vi",
   "last_name": "Ngo Quoc", 
   "name": "Vi Ngo Quoc",
-  "title": "Mobile Developer",
+  "title": "iOS Developer",
   "bio": "iOS Developer with a passion for AI research and development.",
   "about": {
     "title": "iOS Developer & AI Enthusiast",
@@ -15,17 +15,17 @@
     ],
     "services": [
       {
-        "icon": "/icons/services/ios-development.png",
+        "icon": "/icons/services/ios-dev-new.svg",
         "title": "iOS Development",
         "description": "Native iOS application development using Swift and Objective-C, specializing in healthcare and data recording applications"
       },
       {
-        "icon": "/icons/services/ai-ml.png", 
+        "icon": "/icons/services/ai-ml-new.svg", 
         "title": "AI & Machine Learning",
         "description": "Computer vision and machine learning solutions using Python, TensorFlow, and OpenCV for real-world applications"
       },
       {
-        "icon": "/icons/services/flutter-development.png",
+        "icon": "/icons/services/flutter-new.svg",
         "title": "Flutter Development", 
         "description": "Cross-platform mobile development with Flutter and Dart for efficient multi-platform solutions"
       }

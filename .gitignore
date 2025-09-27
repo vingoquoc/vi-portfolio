@@ -47,3 +47,13 @@ temp/
 # Deploy documentation (không muốn up lên GitHub)
 DEPLOY.md
 SETUP.html
+
+# Docker local development (không up lên production)
+Dockerfile
+docker-compose.yml
+.dockerignore
+docker.sh
+ICONS_DOWNLOAD.md
+
+# Local development folders
+public/icons/new/

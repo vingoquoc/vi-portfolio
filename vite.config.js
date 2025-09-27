@@ -9,6 +9,7 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
+    minify: true,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -19,9 +20,13 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    hmr: false, // Tắt Hot Module Replacement
+    host: '0.0.0.0', // Cho phép truy cập từ bên ngoài container
+    hmr: {
+      port: 3000
+    },
     watch: {
-      ignored: ['**/node_modules/**'] // Không watch node_modules
+      usePolling: true, // Cần cho Docker volume mounting
+      ignored: ['**/node_modules/**']
     },
     proxy: {
       '/api': {
@@ -30,10 +35,5 @@ export default defineConfig({
         secure: false,
       },
     },
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: false, // Tắt sourcemap để tối ưu
-    minify: true,
   },
 })

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope, FaDownload, FaExternalLinkAlt, FaChevronDown, FaBars, FaTimes, FaCode, FaRocket, FaLightbulb, FaUser, FaBriefcase, FaGraduationCap, FaAward, FaEye, FaHeart, FaMapMarkerAlt, FaPhone, FaStar, FaArrowUp } from 'react-icons/fa'
+import { HiCode, HiLightningBolt, HiAcademicCap, HiCollection, HiStar } from 'react-icons/hi'
+import { BiLocationPlus } from 'react-icons/bi'
+import { MdEmail, MdPhone, MdDateRange } from 'react-icons/md'
 import { useTheme } from '../contexts/ThemeContext'
 import ThemeToggle from './ThemeToggle'
 import ApiService from '../services/api'
@@ -746,14 +749,14 @@ function DynamicPortfolio() {
           <div id="stats" className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24">
             {[
               { 
-                icon: FaCode, 
+                icon: HiCollection, 
                 label: 'Projects', 
                 value: projects.length, 
                 color: 'from-blue-500 to-cyan-500',
                 description: 'Completed Projects'
               },
               { 
-                icon: FaRocket, 
+                icon: HiLightningBolt, 
                 label: 'Experience', 
                 value: experience.length, 
                 suffix: ' Years', 
@@ -761,14 +764,14 @@ function DynamicPortfolio() {
                 description: 'Years of Experience'
               },
               { 
-                icon: FaAward, 
+                icon: HiCode, 
                 label: 'Technologies', 
                 value: skills.filter(skill => skill.is_active !== false).length, 
                 color: 'from-green-500 to-emerald-500',
                 description: 'Tech Stack'
               },
               { 
-                icon: FaEye, 
+                icon: HiAcademicCap, 
                 label: 'Education', 
                 value: education.length, 
                 color: 'from-orange-500 to-red-500',
@@ -966,9 +969,7 @@ function DynamicPortfolio() {
           {/* Enhanced Header */}
           <div className="text-center mb-20">
             <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 mb-8 shadow-2xl">
-              <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
-              </svg>
+              <HiCode className="w-12 h-12 text-white" />
             </div>
             <h2 className={`text-6xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'} tracking-tight`}>
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -1116,9 +1117,7 @@ function DynamicPortfolio() {
             {/* Enhanced Header */}
             <div className="text-center mb-20">
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 mb-8 shadow-2xl">
-                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.84L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
-                </svg>
+                <HiAcademicCap className="w-10 h-10 text-white" />
               </div>
               <h2 className={`text-6xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'} tracking-tight`}>
                 <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
@@ -1208,9 +1207,7 @@ function DynamicPortfolio() {
 
                           {/* Institution */}
                           <div className={`text-lg font-semibold mb-4 ${isDark ? 'text-blue-400' : 'text-blue-600'} flex items-center space-x-2`}>
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
-                            </svg>
+                            <BiLocationPlus className="w-5 h-5" />
                             <span>{edu.institution}</span>
                           </div>
 
@@ -1229,9 +1226,7 @@ function DynamicPortfolio() {
                                   ? 'bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30' 
                                   : 'bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200'
                               } backdrop-blur-sm`}>
-                                <svg className={`w-5 h-5 ${isDark ? 'text-green-400' : 'text-green-600'}`} fill="currentColor" viewBox="0 0 20 20">
-                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
+                                <HiStar className={`w-5 h-5 ${isDark ? 'text-green-400' : 'text-green-600'}`} />
                                 <span className={`font-bold text-sm ${isDark ? 'text-green-400' : 'text-green-700'}`}>
                                   GPA: {edu.gpa}
                                 </span>
@@ -1243,9 +1238,7 @@ function DynamicPortfolio() {
                           {edu.achievements && edu.achievements.length > 0 && (
                             <div className="space-y-3">
                               <h4 className={`font-bold text-lg ${isDark ? 'text-white' : 'text-gray-900'} flex items-center space-x-2`}>
-                                <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
+                                <HiStar className="w-5 h-5 text-yellow-500" />
                                 <span>Key Achievements</span>
                               </h4>
                               <div className="space-y-2">
@@ -1322,9 +1315,7 @@ function DynamicPortfolio() {
           {/* Enhanced Header */}
           <div className="text-center mb-20">
             <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 mb-8 shadow-2xl">
-              <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
+              <FaBriefcase className="w-12 h-12 text-white" />
             </div>
             <h2 className={`text-6xl font-black mb-6 ${isDark ? 'text-white' : 'text-gray-900'} tracking-tight`}>
               <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -1428,21 +1419,15 @@ function DynamicPortfolio() {
                         {/* Company & Location */}
                         <div className="space-y-2 mb-6">
                           <div className={`text-lg font-semibold ${isDark ? 'text-indigo-400' : 'text-indigo-600'} flex items-center space-x-2`}>
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-6a1 1 0 00-1-1H9a1 1 0 00-1 1v6a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 8a1 1 0 011-1h4a1 1 0 011 1v4H7v-4z" clipRule="evenodd"/>
-                            </svg>
+                            <FaBriefcase className="w-5 h-5" />
                             <span>{exp.company}</span>
                           </div>
                           <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} flex items-center space-x-2`}>
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
-                            </svg>
+                            <BiLocationPlus className="w-4 h-4" />
                             <span>{exp.location}</span>
                           </div>
                           <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} flex items-center space-x-2`}>
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"/>
-                            </svg>
+                            <MdDateRange className="w-4 h-4" />
                             <span>
                               {new Date(exp.start_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - {' '}
                               {exp.end_date ? new Date(exp.end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Present'}
@@ -1459,9 +1444,7 @@ function DynamicPortfolio() {
                         {exp.technologies && exp.technologies.length > 0 && (
                           <div className="mb-6">
                             <h5 className={`font-semibold mb-3 ${isDark ? 'text-white' : 'text-gray-900'} flex items-center space-x-2`}>
-                              <svg className="w-5 h-5 text-indigo-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
-                              </svg>
+                              <HiCode className="w-5 h-5 text-indigo-500" />
                               <span>Technologies</span>
                             </h5>
                             <div className="flex flex-wrap gap-2">
@@ -1483,9 +1466,7 @@ function DynamicPortfolio() {
                         {exp.achievements && exp.achievements.length > 0 && (
                           <div className="space-y-3">
                             <h4 className={`font-bold text-lg ${isDark ? 'text-white' : 'text-gray-900'} flex items-center space-x-2`}>
-                              <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                              </svg>
+                              <HiStar className="w-5 h-5 text-yellow-500" />
                               <span>Key Achievements</span>
                             </h4>
                             <div className="space-y-3">
@@ -1720,7 +1701,7 @@ function DynamicPortfolio() {
             </div>
 
             <div className={`p-6 rounded-xl ${isDark ? 'bg-gray-900' : 'bg-white'} shadow-lg hover:shadow-xl transition-all duration-300`}>
-              <FaUser className="text-3xl text-green-500 mx-auto mb-4" />
+              <BiLocationPlus className="text-3xl text-green-500 mx-auto mb-4" />
               <h3 className={`font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Location</h3>
               <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
                 {profileData?.location}
@@ -1728,7 +1709,7 @@ function DynamicPortfolio() {
             </div>
 
             <div className={`p-6 rounded-xl ${isDark ? 'bg-gray-900' : 'bg-white'} shadow-lg hover:shadow-xl transition-all duration-300`}>
-              <FaGraduationCap className="text-3xl text-purple-500 mx-auto mb-4" />
+              <MdPhone className="text-3xl text-purple-500 mx-auto mb-4" />
               <h3 className={`font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Phone</h3>
               <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
                 {profileData?.phone}
@@ -1741,7 +1722,7 @@ function DynamicPortfolio() {
               onClick={() => window.location.href = `mailto:${profileData.email}`}
               className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-12 py-4 rounded-full text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 inline-flex items-center"
             >
-              <FaEnvelope className="mr-3" />
+              <MdEmail className="mr-3" />
               Send Message
             </button>
           )}
