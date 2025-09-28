@@ -203,6 +203,246 @@
     #ambientBtn { position: fixed; top: 20px; right: 110px; z-index: 9; background: rgba(255,235,200,0.95); color:#8b0000; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
     #ambientBtn[aria-pressed='true'] { background: #ffdca8; }
   </style>
+  <!-- Responsive tweaks: stack countdown on small screens, scale numbers, reduce/disable heavy effects on mobile -->
+  <style id="tet-responsive">
+    .countdown { flex-wrap: wrap; justify-content: center; align-items: center; }
+    .countdown-item { min-width: 110px; }
+    /* fluid number sizing while preserving large desktop size */
+    .count-num { font-size: clamp(36px, 8vw, 96px) !important; }
+    /* ensure labels stay subtle */
+    .label { font-size: clamp(12px, 1.6vw, 16px) !important; }
+
+    @media (max-width: 900px) {
+      .countdown { gap: 1rem; padding: 1rem 1.2rem; }
+      .countdown-item { min-width: 90px; }
+    }
+    @media (max-width: 640px) {
+      /* stack vertically on very narrow screens */
+      .countdown { flex-direction: column; gap: 14px; padding: 1rem; }
+      .countdown-item { width: 100%; display:flex; justify-content:center; align-items:center; gap: 12px; }
+      .count-num { font-size: clamp(30px, 12vw, 56px) !important; }
+      .label { font-size: 13px !important; }
+      /* disable heavy visual effects to save CPU/battery on mobile */
+      #sparkleCanvas, #confettiCanvas, #lanterns, #bokeh, .tet-vignette, .warm-overlay { display: none !important; }
+    }
+
+    /* prefer-reduced-motion: reduce animations for users who want fewer motion effects */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+
+  <!-- Load calligraphy + Vietnamese-safe fonts and apply them -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif:wght@400;700&display=swap&subset=vietnamese" rel="stylesheet">
+  <style>
+    /* Use a decorative script for headings/labels, but fall back to Noto Serif for proper Vietnamese diacritics */
+    h1, .count-label {
+      font-family: 'Great Vibes', 'Noto Serif', serif !important;
+      color: #8b0000 !important;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+    /* Ensure numeric counters use a sturdy serif that supports locales */
+    .count-num, .count-num span {
+      font-family: 'Noto Serif', Georgia, 'Times New Roman', serif !important;
+    }
+  </style>
+  <!-- Tăng cấp giao diện: nền động, banner thư pháp, confetti, chime (tùy chọn), number cards -->
+  <style id="tet-enhance-styles">
+    /* animated golden shimmer background */
+    @keyframes goldShift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
+    body { background: linear-gradient(120deg, #fff9d6 0%, #ffe066 40%, #ffd000 100%) !important; background-size: 200% 200%; animation: goldShift 18s ease-in-out infinite; }
+
+    /* banner */
+    #tet-banner {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 8;
+      background: rgba(255, 245, 225, 0.95); padding: 10px 22px; border-radius: 36px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      border: 2px solid rgba(255,215,64,0.14);
+      font-size: 1.6rem; color: #8b0000; font-family: 'Great Vibes', 'Noto Serif', serif;
+    }
+
+    /* count number cards */
+    .count-num {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+      padding: 18px 28px; border-radius: 18px; display:inline-block; min-width:120px; text-align:center;
+      box-shadow: 0 10px 30px rgba(183,28,28,0.08), inset 0 -6px 12px rgba(0,0,0,0.04);
+      border: 2px solid rgba(255,215,64,0.12);
+    }
+
+    /* chime button */
+    #chimeBtn { position: fixed; top: 20px; right: 18px; z-index: 9; background:#d32f2f; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(211,47,47,0.18); }
+    #chimeBtn[aria-pressed="true"]{ background:#8b0000; }
+
+    /* confetti canvas sits above sparkles */
+    #confettiCanvas{ position: fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:7; }
+  </style>
+  <!-- Warm & happy upgrades: bokeh, sunbeam, floating petals/hearts, ambient audio control -->
+  <style id="tet-warmup">
+    /* warm color overlay to boost happiness */
+    .warm-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 4;
+      background: radial-gradient(circle at 20% 20%, rgba(255,244,214,0.10), rgba(255,215,120,0.06) 12%, rgba(0,0,0,0) 30%),
+                  radial-gradient(circle at 80% 80%, rgba(255,230,200,0.06), rgba(255,190,80,0.02) 18%, rgba(0,0,0,0) 40%);
+      mix-blend-mode: overlay;
+    }
+
+    /* soft sunbeam */
+    #sunbeam { position: fixed; inset: 0; z-index:3; pointer-events:none; }
+    #sunbeam:before {
+      content: ''; position: absolute; left: -20%; top: -10%; width: 140%; height: 60%;
+      background: linear-gradient(120deg, rgba(255,245,190,0.14), rgba(255,200,80,0.06) 40%, rgba(255,200,80,0) 70%);
+      transform: rotate(-8deg); filter: blur(36px) saturate(1.1);
+      animation: beamShift 10s ease-in-out infinite;
+    }
+    @keyframes beamShift { 0%{transform:translateX(-6%) rotate(-8deg)}50%{transform:translateX(6%) rotate(-6deg)}100%{transform:translateX(-6%) rotate(-8deg)} }
+
+    /* bokeh circles */
+    #bokeh { position: fixed; inset:0; pointer-events:none; z-index:5; }
+    #bokeh .dot { position:absolute; border-radius:50%; filter: blur(6px); opacity:0.0; mix-blend-mode: screen; }
+    /* pre-create sizes and positions via JS for randomness */
+
+    /* floating petals/hearts */
+    .petal { position: fixed; width: 18px; height: 24px; pointer-events:none; z-index:9; opacity:0.95; transform-origin:center; }
+    .petal svg { width:100%; height:100%; }
+
+    /* ambient audio play button */
+    #ambientBtn { position: fixed; top: 20px; right: 110px; z-index: 9; background: rgba(255,235,200,0.95); color:#8b0000; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+    #ambientBtn[aria-pressed='true'] { background: #ffdca8; }
+  </style>
+  <!-- Responsive tweaks: stack countdown on small screens, scale numbers, reduce/disable heavy effects on mobile -->
+  <style id="tet-responsive">
+    .countdown { flex-wrap: wrap; justify-content: center; align-items: center; }
+    .countdown-item { min-width: 110px; }
+    /* fluid number sizing while preserving large desktop size */
+    .count-num { font-size: clamp(36px, 8vw, 96px) !important; }
+    /* ensure labels stay subtle */
+    .label { font-size: clamp(12px, 1.6vw, 16px) !important; }
+
+    @media (max-width: 900px) {
+      .countdown { gap: 1rem; padding: 1rem 1.2rem; }
+      .countdown-item { min-width: 90px; }
+    }
+    @media (max-width: 640px) {
+      /* stack vertically on very narrow screens */
+      .countdown { flex-direction: column; gap: 14px; padding: 1rem; }
+      .countdown-item { width: 100%; display:flex; justify-content:center; align-items:center; gap: 12px; }
+      .count-num { font-size: clamp(30px, 12vw, 56px) !important; }
+      .label { font-size: 13px !important; }
+      /* disable heavy visual effects to save CPU/battery on mobile */
+      #sparkleCanvas, #confettiCanvas, #lanterns, #bokeh, .tet-vignette, .warm-overlay { display: none !important; }
+    }
+
+    /* prefer-reduced-motion: reduce animations for users who want fewer motion effects */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+
+  <!-- Load calligraphy + Vietnamese-safe fonts and apply them -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif:wght@400;700&display=swap&subset=vietnamese" rel="stylesheet">
+  <style>
+    /* Use a decorative script for headings/labels, but fall back to Noto Serif for proper Vietnamese diacritics */
+    h1, .count-label {
+      font-family: 'Great Vibes', 'Noto Serif', serif !important;
+      color: #8b0000 !important;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+    /* Ensure numeric counters use a sturdy serif that supports locales */
+    .count-num, .count-num span {
+      font-family: 'Noto Serif', Georgia, 'Times New Roman', serif !important;
+    }
+  </style>
+  <!-- Tăng cấp giao diện: nền động, banner thư pháp, confetti, chime (tùy chọn), number cards -->
+  <style id="tet-enhance-styles">
+    /* animated golden shimmer background */
+    @keyframes goldShift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
+    body { background: linear-gradient(120deg, #fff9d6 0%, #ffe066 40%, #ffd000 100%) !important; background-size: 200% 200%; animation: goldShift 18s ease-in-out infinite; }
+
+    /* banner */
+    #tet-banner {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 8;
+      background: rgba(255, 245, 225, 0.95); padding: 10px 22px; border-radius: 36px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      border: 2px solid rgba(255,215,64,0.14);
+      font-size: 1.6rem; color: #8b0000; font-family: 'Great Vibes', 'Noto Serif', serif;
+    }
+
+    /* count number cards */
+    .count-num {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+      padding: 18px 28px; border-radius: 18px; display:inline-block; min-width:120px; text-align:center;
+      box-shadow: 0 10px 30px rgba(183,28,28,0.08), inset 0 -6px 12px rgba(0,0,0,0.04);
+      border: 2px solid rgba(255,215,64,0.12);
+    }
+
+    /* chime button */
+    #chimeBtn { position: fixed; top: 20px; right: 18px; z-index: 9; background:#d32f2f; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(211,47,47,0.18); }
+    #chimeBtn[aria-pressed="true"]{ background:#8b0000; }
+
+    /* confetti canvas sits above sparkles */
+    #confettiCanvas{ position: fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:7; }
+  </style>
+  <!-- Warm & happy upgrades: bokeh, sunbeam, floating petals/hearts, ambient audio control -->
+  <style id="tet-warmup">
+    /* warm color overlay to boost happiness */
+    .warm-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 4;
+      background: radial-gradient(circle at 20% 20%, rgba(255,244,214,0.10), rgba(255,215,120,0.06) 12%, rgba(0,0,0,0) 30%),
+                  radial-gradient(circle at 80% 80%, rgba(255,230,200,0.06), rgba(255,190,80,0.02) 18%, rgba(0,0,0,0) 40%);
+      mix-blend-mode: overlay;
+    }
+
+    /* soft sunbeam */
+    #sunbeam { position: fixed; inset: 0; z-index:3; pointer-events:none; }
+    #sunbeam:before {
+      content: ''; position: absolute; left: -20%; top: -10%; width: 140%; height: 60%;
+      background: linear-gradient(120deg, rgba(255,245,190,0.14), rgba(255,200,80,0.06) 40%, rgba(255,200,80,0) 70%);
+      transform: rotate(-8deg); filter: blur(36px) saturate(1.1);
+      animation: beamShift 10s ease-in-out infinite;
+    }
+    @keyframes beamShift { 0%{transform:translateX(-6%) rotate(-8deg)}50%{transform:translateX(6%) rotate(-6deg)}100%{transform:translateX(-6%) rotate(-8deg)} }
+
+    /* bokeh circles */
+    #bokeh { position: fixed; inset:0; pointer-events:none; z-index:5; }
+    #bokeh .dot { position:absolute; border-radius:50%; filter: blur(6px); opacity:0.0; mix-blend-mode: screen; }
+    /* pre-create sizes and positions via JS for randomness */
+
+    /* floating petals/hearts */
+    .petal { position: fixed; width: 18px; height: 24px; pointer-events:none; z-index:9; opacity:0.95; transform-origin:center; }
+    .petal svg { width:100%; height:100%; }
+
+    /* ambient audio play button */
+    #ambientBtn { position: fixed; top: 20px; right: 110px; z-index: 9; background: rgba(255,235,200,0.95); color:#8b0000; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+    #ambientBtn[aria-pressed='true'] { background: #ffdca8; }
+  </style>
+  <!-- Responsive tweaks: stack countdown on small screens, scale numbers, reduce/disable heavy effects on mobile -->
+  <style id="tet-responsive">
+    .countdown { flex-wrap: wrap; justify-content: center; align-items: center; }
+    .countdown-item { min-width: 110px; }
+    /* fluid number sizing while preserving large desktop size */
+    .count-num { font-size: clamp(36px, 8vw, 96px) !important; }
+    /* ensure labels stay subtle */
+    .label { font-size: clamp(12px, 1.6vw, 16px) !important; }
+
+    @media (max-width: 900px) {
+      .countdown { gap: 1rem; padding: 1rem 1.2rem; }
+      .countdown-item { min-width: 90px; }
+    }
+    @media (max-width: 640px) {
+      /* stack vertically on very narrow screens */
+      .countdown { flex-direction: column; gap: 14px; padding: 1rem; }
+      .countdown-item { width: 100%; display:flex; justify-content:center; align-items:center; gap: 12px; }
+      .count-num { font-size: clamp(30px, 12vw, 56px) !important; }
+      .label { font-size: 13px !important; }
+      /* disable heavy visual effects to save CPU/battery on mobile */
+      #sparkleCanvas, #confettiCanvas, #lanterns, #bokeh, .tet-vignette, .warm-overlay { display: none !important; }
+    }
+
+    /* prefer-reduced-motion: reduce animations for users who want fewer motion effects */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
 </head>
 <body>
   <h1>Đếm ngược tới Tết Nguyên Đán 2026</h1>
