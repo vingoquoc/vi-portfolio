@@ -11,7 +11,7 @@
     "category": "Mobile Development", 
     "name": "Swift",
     "level": 60,
-    "icon": "/icons/skills/swift.svg"
+    "icon": "/icons/skills/swift.png"
   },
   {
     "id": 3,
@@ -32,7 +32,7 @@
     "category": "Backend",
     "name": "Node.js",
     "level": 50,
-    "icon": "/icons/skills/nodejs.svg"
+    "icon": "/icons/skills/nodejs.png"
   },
   {
     "id": 6,
@@ -109,6 +109,6 @@
     "category": "Programming Language",
     "name": "JavaScript",
     "level": 78,
-    "icon": "/icons/skills/javascript.svg"
+    "icon": "/icons/skills/js.png"
   }
 ]

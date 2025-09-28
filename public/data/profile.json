@@ -20,14 +20,14 @@
         "description": "Native iOS application development using Swift and Objective-C, specializing in healthcare and data recording applications"
       },
       {
-        "icon": "/icons/services/ai-ml-new.svg", 
-        "title": "AI & Machine Learning",
-        "description": "Computer vision and machine learning solutions using Python, TensorFlow, and OpenCV for real-world applications"
-      },
-      {
         "icon": "/icons/services/flutter-new.svg",
         "title": "Flutter Development", 
         "description": "Cross-platform mobile development with Flutter and Dart for efficient multi-platform solutions"
+      },
+            {
+        "icon": "/icons/services/ai-ml-new.svg", 
+        "title": "AI & Machine Learning",
+        "description": "Computer vision and machine learning solutions using Python, TensorFlow, and OpenCV for real-world applications"
       }
     ]
   },
