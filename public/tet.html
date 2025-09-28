@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đếm ngược tới Tết Âm lịch 2026</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #fffbe6 0%, #ffe5e5 100%);
+      font-family: 'Inter', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #d7263d;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .countdown {
+      display: flex;
+      gap: 2rem;
+      background: rgba(255,255,255,0.8);
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2rem 3rem;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+    }
+    .countdown-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .label {
+      font-size: 1rem;
+      color: #d7263d;
+      margin-top: 0.5rem;
+    }
+    .info {
+      margin-top: 2rem;
+      color: #555;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    /* full-screen canvas for sparkles */
+    #sparkleCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 6;
+      mix-blend-mode: screen;
+    }
+    /* soft vignette and glow for festive look */
+    .tet-vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 20%, rgba(255,240,220,0.08), rgba(255,200,150,0.06) 30%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+      z-index: 2;
+    }
+    /* floating lanterns container */
+    #lanterns {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      overflow: hidden;
+    }
+    .lantern {
+      position: absolute;
+      width: 48px;
+      height: 64px;
+      transform-origin: center bottom;
+      opacity: 0;
+      filter: drop-shadow(0 6px 14px rgba(215,40,40,0.35));
+      animation: floatUp linear forwards;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(0.9) rotate(-6deg); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(-110vh) scale(1.05) rotate(6deg); opacity: 0; }
+    }
+    /* little twinkle pulse for countdown numbers */
+    .count-num {
+      transition: text-shadow 300ms ease;
+    }
+    .count-num.pulse {
+      text-shadow: 0 0 18px rgba(255,220,100,0.9), 0 0 32px rgba(255,120,80,0.6);
+    }
+  </style>
+  <!-- Override: make page background yellow and count numbers larger and styled -->
+  <style id="tet-override">
+    body {
+      background: linear-gradient(120deg, #fff9d6 0%, #ffe066 40%, #ffd000 100%) !important;
+    }
+    /* Make main numbers large and festive */
+    .count-num, .count-num span, .count-num > span, .count-num[id] {
+      font-size: 96px !important;
+      line-height: 1 !important;
+      color: #b71c1c !important; /* deep festive red */
+      font-weight: 800 !important;
+      text-shadow: 0 6px 20px rgba(183,28,28,0.18), 0 0 36px rgba(255,215,64,0.12);
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)) !important;
+    }
+    .count-label {
+      font-size: 14px !important;
+      color: rgba(34,34,34,0.9) !important;
+      margin-top: 6px !important;
+    }
+    /* Responsive: smaller on phones */
+    @media (max-width: 800px) {
+      .count-num, .count-num span, .count-num > span, .count-num[id] {
+        font-size: 56px !important;
+      }
+      h1 { font-size: 1.4rem !important; }
+    }
+  </style>
+  <!-- Load calligraphy + Vietnamese-safe fonts and apply them -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif:wght@400;700&display=swap&subset=vietnamese" rel="stylesheet">
+  <style>
+    /* Use a decorative script for headings/labels, but fall back to Noto Serif for proper Vietnamese diacritics */
+    h1, .count-label {
+      font-family: 'Great Vibes', 'Noto Serif', serif !important;
+      color: #8b0000 !important;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+    /* Ensure numeric counters use a sturdy serif that supports locales */
+    .count-num, .count-num span {
+      font-family: 'Noto Serif', Georgia, 'Times New Roman', serif !important;
+    }
+  </style>
+  <!-- Tăng cấp giao diện: nền động, banner thư pháp, confetti, chime (tùy chọn), number cards -->
+  <style id="tet-enhance-styles">
+    /* animated golden shimmer background */
+    @keyframes goldShift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
+    body { background: linear-gradient(120deg, #fff9d6 0%, #ffe066 40%, #ffd000 100%) !important; background-size: 200% 200%; animation: goldShift 18s ease-in-out infinite; }
+
+    /* banner */
+    #tet-banner {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 8;
+      background: rgba(255, 245, 225, 0.95); padding: 10px 22px; border-radius: 36px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      border: 2px solid rgba(255,215,64,0.14);
+      font-size: 1.6rem; color: #8b0000; font-family: 'Great Vibes', 'Noto Serif', serif;
+    }
+
+    /* count number cards */
+    .count-num {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+      padding: 18px 28px; border-radius: 18px; display:inline-block; min-width:120px; text-align:center;
+      box-shadow: 0 10px 30px rgba(183,28,28,0.08), inset 0 -6px 12px rgba(0,0,0,0.04);
+      border: 2px solid rgba(255,215,64,0.12);
+    }
+
+    /* chime button */
+    #chimeBtn { position: fixed; top: 20px; right: 18px; z-index: 9; background:#d32f2f; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(211,47,47,0.18); }
+    #chimeBtn[aria-pressed="true"]{ background:#8b0000; }
+
+    /* confetti canvas sits above sparkles */
+    #confettiCanvas{ position: fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:7; }
+  </style>
+  <!-- Warm & happy upgrades: bokeh, sunbeam, floating petals/hearts, ambient audio control -->
+  <style id="tet-warmup">
+    /* warm color overlay to boost happiness */
+    .warm-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 4;
+      background: radial-gradient(circle at 20% 20%, rgba(255,244,214,0.10), rgba(255,215,120,0.06) 12%, rgba(0,0,0,0) 30%),
+                  radial-gradient(circle at 80% 80%, rgba(255,230,200,0.06), rgba(255,190,80,0.02) 18%, rgba(0,0,0,0) 40%);
+      mix-blend-mode: overlay;
+    }
+
+    /* soft sunbeam */
+    #sunbeam { position: fixed; inset: 0; z-index:3; pointer-events:none; }
+    #sunbeam:before {
+      content: ''; position: absolute; left: -20%; top: -10%; width: 140%; height: 60%;
+      background: linear-gradient(120deg, rgba(255,245,190,0.14), rgba(255,200,80,0.06) 40%, rgba(255,200,80,0) 70%);
+      transform: rotate(-8deg); filter: blur(36px) saturate(1.1);
+      animation: beamShift 10s ease-in-out infinite;
+    }
+    @keyframes beamShift { 0%{transform:translateX(-6%) rotate(-8deg)}50%{transform:translateX(6%) rotate(-6deg)}100%{transform:translateX(-6%) rotate(-8deg)} }
+
+    /* bokeh circles */
+    #bokeh { position: fixed; inset:0; pointer-events:none; z-index:5; }
+    #bokeh .dot { position:absolute; border-radius:50%; filter: blur(6px); opacity:0.0; mix-blend-mode: screen; }
+    /* pre-create sizes and positions via JS for randomness */
+
+    /* floating petals/hearts */
+    .petal { position: fixed; width: 18px; height: 24px; pointer-events:none; z-index:9; opacity:0.95; transform-origin:center; }
+    .petal svg { width:100%; height:100%; }
+
+    /* ambient audio play button */
+    #ambientBtn { position: fixed; top: 20px; right: 110px; z-index: 9; background: rgba(255,235,200,0.95); color:#8b0000; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+    #ambientBtn[aria-pressed='true'] { background: #ffdca8; }
+  </style>
+</head>
+<body>
+  <h1>Đếm ngược tới Tết Nguyên Đán 2026</h1>
+  <div class="countdown" id="countdown">
+    <div class="countdown-item"><span id="days" class="count-num">0</span><span class="label">Ngày</span></div>
+    <div class="countdown-item"><span id="hours" class="count-num">0</span><span class="label">Giờ</span></div>
+    <div class="countdown-item"><span id="minutes" class="count-num">0</span><span class="label">Phút</span></div>
+    <div class="countdown-item"><span id="seconds" class="count-num">0</span><span class="label">Giây</span></div>
+  </div>
+  <div class="info">Tết Nguyên Đán 2026 rơi vào ngày 17/02/2026 (Mùng 1 Tết)</div>
+
+  <!-- Add festive decorations -->
+  <div style="position: fixed; bottom: 16px; right: 16px; z-index: 10;">
+    <svg width="48" height="48" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="32" fill="#aeea00" />
+      <ellipse cx="32" cy="44" rx="18" ry="10" fill="#fff176" />
+      <circle cx="24" cy="28" r="6" fill="#fff" />
+      <circle cx="40" cy="28" r="6" fill="#fff" />
+      <circle cx="24" cy="28" r="3" fill="#388e3c" />
+      <circle cx="40" cy="28" r="3" fill="#388e3c" />
+      <ellipse cx="32" cy="38" rx="8" ry="4" fill="#388e3c" />
+      <rect x="28" y="48" width="8" height="4" rx="2" fill="#388e3c" />
+    </svg>
+  </div>
+
+  <!-- Hoa mai vàng góc trái trên -->
+  <svg style="position:absolute;top:24px;left:32px;width:80px;height:80px;z-index:2;" viewBox="0 0 80 80">
+    <g>
+      <circle cx="40" cy="40" r="18" fill="#ffd700" />
+      <circle cx="40" cy="22" r="8" fill="#fffde7" />
+      <circle cx="58" cy="40" r="8" fill="#fffde7" />
+      <circle cx="40" cy="58" r="8" fill="#fffde7" />
+      <circle cx="22" cy="40" r="8" fill="#fffde7" />
+      <circle cx="40" cy="40" r="5" fill="#d7263d" />
+    </g>
+  </svg>
+  <!-- Hoa đào hồng góc phải trên -->
+  <svg style="position:absolute;top:24px;right:32px;width:80px;height:80px;z-index:2;" viewBox="0 0 80 80">
+    <g>
+      <circle cx="40" cy="40" r="18" fill="#ffb6b9" />
+      <circle cx="40" cy="22" r="8" fill="#fff" />
+      <circle cx="58" cy="40" r="8" fill="#fff" />
+      <circle cx="40" cy="58" r="8" fill="#fff" />
+      <circle cx="22" cy="40" r="8" fill="#fff" />
+      <circle cx="40" cy="40" r="5" fill="#d7263d" />
+    </g>
+  </svg>
+  <!-- Đèn lồng đỏ treo giữa trên -->
+  <svg style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:48px;height:80px;z-index:2;" viewBox="0 0 48 80">
+    <ellipse cx="24" cy="32" rx="18" ry="24" fill="#d7263d" stroke="#ffd700" stroke-width="3" />
+    <rect x="20" y="10" width="8" height="12" fill="#ffd700" />
+    <rect x="22" y="56" width="4" height="16" fill="#ffd700" />
+  </svg>
+
+  <!-- Fireworks effect -->
+  <svg id="firework" style="position:absolute;top:15%;left:50%;width:80px;height:80px;z-index:4;display:none;" viewBox="0 0 80 80">
+    <g id="fw-lines">
+      <line x1="40" y1="40" x2="40" y2="10" stroke="#ffd700" stroke-width="4"/>
+      <line x1="40" y1="40" x2="70" y2="40" stroke="#d7263d" stroke-width="4"/>
+      <line x1="40" y1="40" x2="40" y2="70" stroke="#ffd700" stroke-width="4"/>
+      <line x1="40" y1="40" x2="10" y2="40" stroke="#d7263d" stroke-width="4"/>
+      <line x1="40" y1="40" x2="65" y2="15" stroke="#ffd700" stroke-width="4"/>
+      <line x1="40" y1="40" x2="15" y2="65" stroke="#d7263d" stroke-width="4"/>
+    </g>
+    <circle cx="40" cy="40" r="8" fill="#ffd700"/>
+  </svg>
+  <script>
+    const targetDate = new Date('2026-02-17T00:00:00+07:00');
+    function updateCountdown() {
+      const now = new Date();
+      let diff = targetDate - now;
+      if (diff < 0) diff = 0;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+      document.getElementById('days').textContent = days;
+      document.getElementById('hours').textContent = hours;
+      document.getElementById('minutes').textContent = minutes;
+      document.getElementById('seconds').textContent = seconds;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    function showFirework() {
+      const fw = document.getElementById('firework');
+      fw.style.display = 'block';
+      setTimeout(()=>{fw.style.display='none';},1200);
+    }
+  </script>
+
+  <!-- Sparkle canvas animation -->
+  <canvas id="sparkleCanvas"></canvas>
+  <div class="tet-vignette"></div>
+  <div id="lanterns" aria-hidden="true"></div>
+
+  <script>
+    // Sparkle canvas animation
+    (function(){
+      const canvas = document.getElementById('sparkleCanvas');
+      const ctx = canvas.getContext('2d');
+      let W = canvas.width = innerWidth;
+      let H = canvas.height = innerHeight;
+      window.addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
+
+      const particles = [];
+      function rand(min,max){ return Math.random()*(max-min)+min; }
+      function spawnSpark(x,y){
+        particles.push({
+          x: x == null ? rand(0,W) : x,
+          y: y == null ? rand(0,H) : y,
+          vx: rand(-0.2,0.2),
+          vy: rand(-0.6,-0.1),
+          life: rand(60,160),
+          age: 0,
+          size: rand(2,8),
+          hue: Math.floor(rand(30,50)) + (Math.random()<0.5?0:200) // warm or cool
+        });
+        if (particles.length>720) particles.shift();
+      }
+      // ambient spawn
+      setInterval(()=>{
+        for (let i=0;i<3;i++) spawnSpark();
+      }, 120);
+
+      // mouse sparkle on move
+      let lastMove = 0;
+      window.addEventListener('mousemove', (e)=>{
+        const t = Date.now();
+        if (t-lastMove>20){
+          for (let i=0;i<2;i++) spawnSpark(e.clientX + rand(-10,10), e.clientY + rand(-10,10));
+          lastMove = t;
+        }
+      });
+
+      function draw(){
+        // semi-transparent clear for trailing effect
+        ctx.fillStyle = 'rgba(0,0,0,0.06)';
+        ctx.fillRect(0,0,W,H);
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i=particles.length-1;i>=0;i--){
+          const p = particles[i];
+          p.x += p.vx; p.y += p.vy; p.age++;
+          const lifeRatio = 1 - p.age / p.life;
+          if (lifeRatio <= 0){ particles.splice(i,1); continue; }
+          const alpha = lifeRatio*0.9;
+          const r = p.size * (1 + (1-lifeRatio));
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r*2);
+          g.addColorStop(0, `hsla(${p.hue},95%,70%,${alpha})`);
+          g.addColorStop(0.5, `hsla(${p.hue},80%,60%,${alpha*0.35})`);
+          g.addColorStop(1, `hsla(${p.hue},80%,55%,0)`);
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill();
+        }
+        ctx.globalCompositeOperation = 'source-over';
+        requestAnimationFrame(draw);
+      }
+      draw();
+
+      // occasional sparkle bursts (firework-like)
+      setInterval(()=>{
+        const cx = rand(W*0.15,W*0.85);
+        const cy = rand(H*0.15,H*0.45);
+        for (let i=0;i<40;i++){
+          const a = Math.random()*Math.PI*2;
+          const s = rand(2,10);
+          particles.push({ x:cx, y:cy, vx: Math.cos(a)*rand(0.5,3.2), vy: Math.sin(a)*rand(0.5,3.2), life: rand(40,110), age:0, size: s, hue: Math.floor(rand(25,60)) });
+        }
+      }, 4500 + Math.random()*3500);
+
+      // subtle pulse on numbers occasionally
+      setInterval(()=>{
+        const nums = document.querySelectorAll('.count-num');
+        const idx = Math.floor(Math.random()*nums.length);
+        if (nums[idx]){
+          nums[idx].classList.add('pulse');
+          setTimeout(()=>nums[idx].classList.remove('pulse'), 900);
+        }
+      }, 1200);
+    })();
+
+    // Floating lanterns spawn
+    (function(){
+      const container = document.getElementById('lanterns');
+      function spawnLantern(){
+        const el = document.createElement('div');
+        el.className = 'lantern';
+        const left = Math.random()*100; // vw
+        el.style.left = left + 'vw';
+        const delay = Math.random()*2;
+        const dur = 12 + Math.random()*8;
+        el.style.animationDuration = dur + 's';
+        el.style.animationDelay = delay + 's';
+        el.style.opacity = 0;
+        // simple lantern SVG inside
+        el.innerHTML = `
+          <svg viewBox="0 0 48 64" width="48" height="64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g" x1="0" x2="1">
+                <stop offset="0%" stop-color="#ffd54f" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#d32f2f" stop-opacity="0.95"/>
+              </linearGradient>
+            </defs>
+            <ellipse cx="24" cy="28" rx="18" ry="22" fill="url(#g)" stroke="#fff1c4" stroke-opacity="0.12"/>
+            <rect x="22" y="6" width="4" height="8" fill="#ffd54f"/>
+            <rect x="22" y="52" width="4" height="8" fill="#ffd54f"/>
+          </svg>`;
+        container.appendChild(el);
+        // cleanup
+        setTimeout(()=>{ el.remove(); }, (parseFloat(dur)+parseFloat(delay)+0.6)*1000);
+      }
+      // spawn irregularly
+      setInterval(()=>{ spawnLantern(); }, 1800 + Math.random()*1400);
+      // spawn a couple at start
+      for (let i=0;i<3;i++) setTimeout(spawnLantern, i*600);
+    })();
+
+    // Confetti simple implementation
+    (function(){
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      let W = canvas.width = innerWidth; let H = canvas.height = innerHeight;
+      window.addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
+
+      const confetti = [];
+      const colors = ['#ffd700','#ffb74d','#ff5252','#ff4081','#8bc34a'];
+      function spawnConfetti(x,y,count=24){
+        for (let i=0;i<count;i++){
+          confetti.push({ x:x, y:y, vx:(Math.random()-0.5)*6, vy:(Math.random()*-6)-1, rot:Math.random()*360, vr: (Math.random()-0.5)*10, size: 6+Math.random()*8, color: colors[Math.floor(Math.random()*colors.length)], life:90+Math.random()*80, age:0 });
+        }
+        if (confetti.length>800) confetti.splice(0, confetti.length-800);
+      }
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+        for (let i=confetti.length-1;i>=0;i--){
+          const p = confetti[i]; p.age++; if (p.age>p.life) { confetti.splice(i,1); continue; }
+          p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.rot += p.vr*0.5;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+          ctx.fillStyle = p.color; ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+          ctx.restore();
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+
+      // tie confetti bursts to existing firework bursts: override existing setInterval if present
+      // We'll listen for a custom event 'tet:burst' that other scripts can dispatch
+      window.addEventListener('tet:burst', (e)=>{
+        const {x,y}= e.detail || { x: W/2, y: H/3 };
+        spawnConfetti(x,y,48);
+      });
+
+      // occasional confetti near top for extra glam
+      setInterval(()=>{ spawnConfetti(Math.random()*W*0.6 + W*0.2, Math.random()*H*0.25 + H*0.05, 20); }, 7000 + Math.random()*6000);
+
+      // expose for manual trigger
+      window.tetSpawnConfetti = (x,y,c)=> spawnConfetti(x||W/2, y||H/3, c||36);
+    })();
+
+    // When the sparkle/firework script creates bursts, dispatch event
+    // Patch showFirework if exists
+    if (typeof showFirework === 'function'){
+      const originalShow = showFirework;
+      window.showFirework = function(){
+        // dispatch before to sync
+        const W = innerWidth, H = innerHeight;
+        const x = W * 0.5 + (Math.random()-0.5)*200;
+        const y = H * 0.25 + (Math.random()-0.5)*80;
+        window.dispatchEvent(new CustomEvent('tet:burst', { detail:{x,y} }));
+        originalShow();
+      }
+    }
+
+    
+    // tiny entrance animation for banner
+    (function(){
+      const b = document.getElementById('tet-banner');
+      b.style.transform += ' translateY(-6px)';
+      b.animate([{ transform: 'translate(-50%, -18px) scale(0.94)' }, { transform: 'translate(-50%, 0) scale(1)' }], { duration: 800, easing: 'cubic-bezier(.2,.9,.2,1)' });
+    })();
+
+  // Accessibility: keyboard trigger for chime removed
+  </script>
+
+  <div class="warm-overlay"></div>
+  <div id="sunbeam"></div>
+  <div id="bokeh" aria-hidden="true"></div>
+
+  <script>
+    // create bokeh dots
+    (function(){
+      const bokeh = document.getElementById('bokeh');
+      const count = 18;
+      for (let i=0;i<count;i++){
+        const d = document.createElement('div'); d.className='dot';
+        const size = Math.floor(Math.random()*120)+40; d.style.width = size+'px'; d.style.height = size+'px';
+        d.style.left = Math.random()*100 + 'vw'; d.style.top = Math.random()*60 + 'vh';
+        d.style.background = ['rgba(255,240,200,0.18)','rgba(255,220,180,0.14)','rgba(255,200,120,0.10)'][Math.floor(Math.random()*3)];
+        d.style.animation = `bokehFade ${6 + Math.random()*8}s ${Math.random()*4}s infinite`;
+        bokeh.appendChild(d);
+      }
+      const style = document.createElement('style');
+      style.textContent = `@keyframes bokehFade { 0%{opacity:0}20%{opacity:0.7}60%{opacity:0.4}100%{opacity:0} }`;
+      document.head.appendChild(style);
+    })();
+
+    // floating petals/hearts
+    (function(){
+      function spawnPetal(){
+        const el = document.createElement('div'); el.className='petal';
+        const left = Math.random()*100; el.style.left = left + 'vw';
+        const duration = 8 + Math.random()*8; const delay = Math.random()*2;
+        el.style.transition = `transform ${duration}s linear ${delay}s, opacity ${duration}s linear ${delay}s`;
+        // heart-shaped SVG in warm tone
+        el.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.7-9.3-7.2C.9 10.8 3 6 7.8 6 9.8 6 12 7.8 12 7.8s2.2-1.8 4.2-1.8c4.8 0 6.9 4.8 4.1 7.8C19.5 16.3 12 21 12 21z" fill="#ff8a65"/></svg>`;
+        document.body.appendChild(el);
+        // trigger motion
+        requestAnimationFrame(()=>{
+          el.style.transform = `translateY(-120vh) rotate(${(Math.random()-0.5)*120}deg) scale(${0.9+Math.random()*0.6})`;
+          el.style.opacity = '0';
+        });
+        // cleanup
+        setTimeout(()=>el.remove(), (duration + delay + 0.6)*1000);
+      }
+      // spawn sparsely
+      setInterval(()=>{ if (Math.random()<0.7) spawnPetal(); }, 1400 + Math.random()*1000);
+      for (let i=0;i<2;i++) setTimeout(spawnPetal, i*800);
+    })();
+
+    
+
+    // slightly warm up the number glow more when page visible
+    (function(){
+      const nums = document.querySelectorAll('.count-num');
+      nums.forEach(n=> n.style.transition = 'box-shadow 280ms ease, transform 280ms ease');
+      setInterval(()=>{ const i = Math.floor(Math.random()*nums.length); const el = nums[i]; if (!el) return; el.style.transform='translateY(-6px) scale(1.02)'; el.style.boxShadow='0 14px 40px rgba(255,160,64,0.18)'; setTimeout(()=>{ el.style.transform=''; el.style.boxShadow=''; }, 900); }, 2000);
+    })();
+  </script>
+</body>
+</html>
