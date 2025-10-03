@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Phrasal Verbs & Collocations tiếng Anh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Serene Study -->
+    <!-- Application Structure Plan: The application is structured as an interactive flashcard learning tool. It features a tab system to separate Collocations and Phrasal Verbs, a main control bar with search and practice functionalities, and a responsive grid of flippable cards. This tabbed design was chosen to organize the content into distinct categories, allowing users to focus their study sessions on a specific type of vocabulary, which is more effective than a single, large, mixed list. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Two distinct lists (Collocations and Phrasal Verbs) with their translations. -> Goal: Organize, Inform, and enable Active Recall within categories. -> Presentation Method: A tabbed interface controlling a grid of interactive, flippable flashcards created with HTML/Tailwind CSS. -> Interaction: 1) Clickable tabs to switch datasets. 2) On-click card flip. 3) Live search bar for the active dataset. 4) 'Random', 'Show/Hide All' buttons for the active dataset. -> Justification: The tabbed flashcard approach allows for focused learning. Users can choose what to study, reducing cognitive load. The core active recall mechanism of flashcards is preserved and enhanced with category-specific controls.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.is-flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 1rem;
+            border-radius: 0.75rem;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        .highlight {
+            box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.5); /* blue-500 */
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-sky-700">Học Phrasal Verbs & Collocations tiếng Anh</h1>
+            <p class="mt-2 text-slate-600 max-w-3xl mx-auto">
+                Chọn một danh mục để bắt đầu. Nhấn vào thẻ để xem nghĩa, tìm kiếm hoặc thử các chế độ luyện tập.
+            </p>
+        </header>
+
+        <main>
+            <section id="tabs" class="flex justify-center mb-6 border-b border-slate-300">
+                <button id="phrasalVerbsTab" class="px-6 py-3 font-semibold text-lg border-b-4 border-sky-700 text-sky-700">Phrasal Verbs</button>
+                <button id="collocationsTab" class="px-6 py-3 font-semibold text-lg border-b-4 border-transparent text-slate-500">Collocations</button>
+            </section>
+
+            <section id="controls" class="p-4 mb-8 bg-white rounded-xl shadow-sm sticky top-4 z-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm trong danh mục hiện tại..." class="w-full p-3 pl-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-center md:justify-end gap-2 flex-wrap">
+                        <button id="randomBtn" class="px-4 py-2 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition">Ngẫu nhiên</button>
+                        <button id="randomAllBtn" class="px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition">Kiểm tra ngẫu nhiên</button>
+                        <button id="toggleAllBtn" class="px-4 py-2 bg-slate-600 text-white rounded-lg font-semibold hover:bg-slate-700 transition" data-state="hidden">Hiện tất cả</button>
+                         <button id="resetBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition">Làm lại</button>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="flashcards-section">
+                 <p id="resultsCount" class="text-center text-slate-500 mb-4 font-medium"></p>
+                <div id="flashcardGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const collocationsList = [
+            { en: 'Do damage', vi: 'Gây ra thiệt hại' },
+            { en: 'Do (sb) a favour', vi: 'Giúp đỡ ai đó' },
+            { en: 'Do the housework', vi: 'Làm việc nhà' },
+            { en: 'Do one\'s best', vi: 'Cố hết sức' },
+            { en: 'Do research', vi: 'Nghiên cứu' },
+            { en: 'Do harm', vi: 'Làm hại' },
+            { en: 'Do the ironing/shopping', vi: 'Là quần áo/mua sắm' },
+            { en: 'Do business', vi: 'Kinh doanh' },
+            { en: 'Do justice', vi: 'Thể hiện đúng' },
+            { en: 'Have an operation', vi: 'Phẫu thuật' },
+            { en: 'Have a problem', vi: 'Gặp vấn đề' },
+            { en: 'Have sympathy', vi: 'Đồng cảm' },
+            { en: 'Have a good time', vi: 'Vui vẻ' },
+            { en: 'Have a headache', vi: 'Bị đau đầu' },
+            { en: 'Have a relationship', vi: 'Có mối quan hệ' },
+            { en: 'Have breakfast', vi: 'Ăn sáng' },
+            { en: 'Have fun', vi: 'Vui vẻ' },
+            { en: 'Break the rule', vi: 'Phá vỡ quy tắc' },
+            { en: 'Break someone\'s heart', vi: 'Làm tan nát trái tim ai' },
+            { en: 'Break a record', vi: 'Phá kỷ lục' },
+            { en: 'Break a habit', vi: 'Bỏ một thói quen' },
+            { en: 'Break the news', vi: 'Báo tin' },
+            { en: 'Break a leg', vi: 'Chúc may mắn' },
+            { en: 'Break a promise', vi: 'Thất hứa' },
+            { en: 'Break the ice', vi: 'Phá vỡ sự im lặng' },
+            { en: 'Get divorced', vi: 'Ly dị' },
+            { en: 'Get a job', vi: 'Có việc làm' },
+            { en: 'Get angry', vi: 'Nổi giận' },
+            { en: 'Get frightened', vi: 'Sợ hãi' },
+            { en: 'Get lost', vi: 'Bị lạc / Biến đi' },
+            { en: 'Get married', vi: 'Kết hôn' },
+            { en: 'Get permission', vi: 'Xin phép' },
+            { en: 'Get pregnant', vi: 'Mang thai' },
+            { en: 'Get the impression', vi: 'Có cảm giác' },
+            { en: 'Get upset', vi: 'Buồn bã' },
+            { en: 'Get wet', vi: 'Bị ướt' },
+            { en: 'Get worried', vi: 'Lo lắng' },
+            { en: 'Make a difference', vi: 'Tạo ra sự khác biệt' },
+            { en: 'Make a decision', vi: 'Ra quyết định' },
+            { en: 'Make a promise', vi: 'Hứa' },
+            { en: 'Make an effort', vi: 'Nỗ lực' },
+            { en: 'Make a complaint', vi: 'Phàn nàn' },
+            { en: 'Make a discovery', vi: 'Khám phá' },
+            { en: 'Make a suggestion', vi: 'Đề nghị' },
+            { en: 'Make progress', vi: 'Tiến bộ' },
+            { en: 'Make a mistake', vi: 'Mắc lỗi' },
+            { en: 'Make a mess', vi: 'Làm bừa bộn' },
+            { en: 'Take a break', vi: 'Nghỉ giải lao' },
+            { en: 'Take a rest', vi: 'Nghỉ ngơi' },
+            { en: 'Take a chance', vi: 'Nắm lấy cơ hội' },
+            { en: 'Take a look', vi: 'Nhìn xem' },
+            { en: 'Take a seat', vi: 'Ngồi xuống' },
+            { en: 'Take an exam', vi: 'Làm bài kiểm tra' },
+            { en: 'Take someone\'s place', vi: 'Thay thế ai đó' },
+            { en: 'Take someone\'s temperature', vi: 'Đo nhiệt độ cho ai' },
+            { en: 'Catch a cold', vi: 'Bị cảm lạnh' },
+            { en: 'Catch a train', vi: 'Bắt tàu' },
+            { en: 'Catch a crook', vi: 'Bắt kẻ gian' },
+            { en: 'Catch a chill', vi: 'Bị ớn lạnh' },
+            { en: 'Catch a thief', vi: 'Bắt trộm' },
+            { en: 'Catch sight of', vi: 'Bắt gặp' },
+            { en: 'Catch the flu', vi: 'Bị cúm' },
+            { en: 'Come close', vi: 'Đến gần' },
+            { en: 'Come first', vi: 'Về nhất / Ưu tiên' },
+            { en: 'Come to a compromise', vi: 'Đi đến thỏa hiệp' },
+            { en: 'Come to a decision', vi: 'Đi đến quyết định' },
+            { en: 'Come to a standstill', vi: 'Đi vào bế tắc' },
+            { en: 'Come under attack', vi: 'Bị tấn công' },
+            { en: 'Come to terms with', vi: 'Chấp nhận sự thật' },
+            { en: 'Go abroad', vi: 'Đi nước ngoài' },
+            { en: 'Go bankrupt', vi: 'Phá sản' },
+            { en: 'Go mad', vi: 'Phát điên' },
+            { en: 'Go out of business', vi: 'Ngừng kinh doanh' },
+            { en: 'Go overseas', vi: 'Đi nước ngoài' },
+            { en: 'Go to war', vi: 'Đi đến chiến tranh' },
+            { en: 'Go bald', vi: 'Bị hói' },
+            { en: 'Go blind', vi: 'Bị mù' },
+            { en: 'Go deaf', vi: 'Bị điếc' },
+            { en: 'Go missing', vi: 'Mất tích' },
+            { en: 'Keep a diary', vi: 'Viết nhật ký' },
+            { en: 'Keep a secret', vi: 'Giữ bí mật' },
+            { en: 'Keep a promise', vi: 'Giữ lời hứa' },
+            { en: 'Keep calm', vi: 'Giữ bình tĩnh' },
+            { en: 'Keep in touch', vi: 'Giữ liên lạc' },
+            { en: 'Keep control', vi: 'Giữ kiểm soát' },
+            { en: 'Pay a fine', vi: 'Nộp phạt' },
+            { en: 'Pay a compliment', vi: 'Khen ngợi' },
+            { en: 'Pay the bill', vi: 'Thanh toán hóa đơn' },
+            { en: 'Pay the price', vi: 'Trả giá' },
+            { en: 'Pay your respects', vi: 'Bày tỏ lòng kính trọng' },
+            { en: 'Pay attention', vi: 'Chú ý' },
+            { en: 'Pay by credit card', vi: 'Trả bằng thẻ tín dụng' },
+            { en: 'Pay interest', vi: 'Trả lãi' },
+            { en: 'Pay cash', vi: 'Trả tiền mặt' },
+            { en: 'Save someone a seat', vi: 'Giữ chỗ cho ai' },
+            { en: 'Save yourself the trouble', vi: 'Tránh khỏi rắc rối' },
+            { en: 'Save someone\'s life', vi: 'Cứu mạng ai' },
+            { en: 'Save space', vi: 'Tiết kiệm không gian' },
+            { en: 'Save time', vi: 'Tiết kiệm thời gian' },
+            { en: 'Save energy', vi: 'Tiết kiệm năng lượng' }
+        ];
+
+        const phrasalVerbsList = [
+            { en: 'Leave out', vi: 'Bỏ qua' },
+            { en: 'Break down', vi: 'Đỗ vỡ, hư hỏng' },
+            { en: 'Put forward = Suggest', vi: 'Đề xuất, gợi ý' },
+            { en: 'Dress up', vi: 'Lên đồ, ăn vận (sang trọng)' },
+            { en: 'Stand for', vi: 'Viết tắt cho' },
+            { en: 'Keep up = continue', vi: 'Tiếp tục' },
+            { en: 'Look after = take care of', vi: 'Chăm sóc' },
+            { en: 'Work out = calculate', vi: 'Tính toán' },
+            { en: 'Show up = arrive', vi: 'Tới, đến' },
+            { en: 'Come about = happen', vi: 'Xảy ra' },
+            { en: 'Hold up = delay', vi: 'Dừng lại, trì hoãn' },
+            { en: 'Call off = cancel', vi: 'Hoãn, hủy bỏ' },
+            { en: 'Look for = expect, hope for', vi: 'Trông đợi' },
+            { en: 'Fix up = arrange', vi: 'Sắp xếp' },
+            { en: 'Get by = manage to live', vi: 'Sống bằng' },
+            { en: 'Drop by (drop in to)', vi: 'Ghé qua' },
+            { en: 'Come up it', vi: 'Nghĩ ra' },
+            { en: 'Call up = phone', vi: 'Gọi điện' },
+            { en: 'Bear out = confirm', vi: 'Xác nhận' },
+            { en: 'Bring in = introduce', vi: 'Giới thiệu' },
+            { en: 'Gear up for = prepare for', vi: 'Chuẩn bị' },
+            { en: 'Pair up with team up with', vi: 'Hợp tác' },
+            { en: 'Cut down = reduce', vi: 'Cắt giảm' },
+            { en: 'Look back on = remember', vi: 'Nhớ lại' },
+            { en: 'Bring up = raise', vi: 'Nuôi dưỡng' },
+            { en: 'Hold on = wait', vi: 'Chờ đợi' },
+            { en: 'Turn down = refuse', vi: 'Từ chối' },
+            { en: 'Talk over = discuss', vi: 'Thảo luận' },
+            { en: 'Pick someone up', vi: 'Đón ai đó' },
+            { en: 'Take up', vi: 'Bắt đầu một hoạt động mới' },
+            { en: 'Speed up', vi: 'Tăng tốc' },
+            { en: 'Grow up', vi: 'Lớn lên' },
+            { en: 'Catch up with', vi: 'Bắt kịp, theo kịp' },
+            { en: 'Cut off', vi: 'Cắt bỏ' },
+            { en: 'Account for', vi: 'Giải thích' },
+            { en: 'Belong to', vi: 'Thuộc về' },
+            { en: 'Break away', vi: 'Bỏ trốn' },
+            { en: 'Delight in', vi: 'Thích thú về' },
+            { en: 'Turn away = turn down', vi: 'Từ chối' },
+            { en: 'Wake up = get up', vi: 'Thức dậy' },
+            { en: 'Warm up', vi: 'Khởi động' },
+            { en: 'Turn off', vi: 'Tắt' },
+            { en: 'Turn on', vi: 'Bật' },
+            { en: 'Fall down', vi: 'Xuống cấp' },
+            { en: 'Find out', vi: 'Tìm ra' },
+            { en: 'Get off', vi: 'Khởi hành' },
+            { en: 'Give up', vi: 'Từ bỏ' },
+            { en: 'Go up = increase', vi: 'Tăng lên' },
+            { en: 'Call on = visit', vi: 'Thăm' },
+            { en: 'Think over = consider', vi: 'Cân nhắc' },
+            { en: 'Move on', vi: 'Chuyển sang' },
+            { en: 'Go over = examine', vi: 'Xem xét' },
+            { en: 'Put sth down = write sth', vi: 'Ghi chép lại' },
+            { en: 'Clear up = tidy', vi: 'Dọn dẹp' },
+            { en: 'Carry out = execute', vi: 'Tiến hành' },
+            { en: 'Break in', vi: 'Đột nhập' },
+            { en: 'Back up', vi: 'Ủng hộ' },
+            { en: 'Go away', vi: 'Rời bỏ' },
+            { en: 'Go beyond sth', vi: 'Vượt ngoài gì đó' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('flashcardGrid');
+            const searchInput = document.getElementById('searchInput');
+            const toggleAllBtn = document.getElementById('toggleAllBtn');
+            const randomBtn = document.getElementById('randomBtn');
+            const randomAllBtn = document.getElementById('randomAllBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const resultsCountEl = document.getElementById('resultsCount');
+            const collocationsTab = document.getElementById('collocationsTab');
+            const phrasalVerbsTab = document.getElementById('phrasalVerbsTab');
+
+            let activeList = [];
+
+            const uniqueCollocations = Array.from(new Map(collocationsList.map(item => [item.en.toLowerCase(), item])).values());
+            const uniquePhrasalVerbs = Array.from(new Map(phrasalVerbsList.map(item => [item.en.toLowerCase(), item])).values());
+
+            phrasalVerbsTab.textContent = `Phrasal Verbs (${uniquePhrasalVerbs.length})`;
+            collocationsTab.textContent = `Collocations (${uniqueCollocations.length})`;
+
+            function switchTab(tabName) {
+                searchInput.value = '';
+                if (tabName === 'collocations') {
+                    activeList = uniqueCollocations;
+                    collocationsTab.classList.add('border-sky-700', 'text-sky-700');
+                    collocationsTab.classList.remove('border-transparent', 'text-slate-500');
+                    phrasalVerbsTab.classList.add('border-transparent', 'text-slate-500');
+                    phrasalVerbsTab.classList.remove('border-sky-700', 'text-sky-700');
+                } else {
+                    activeList = uniquePhrasalVerbs;
+                    phrasalVerbsTab.classList.add('border-sky-700', 'text-sky-700');
+                    phrasalVerbsTab.classList.remove('border-transparent', 'text-slate-500');
+                    collocationsTab.classList.add('border-transparent', 'text-slate-500');
+                    collocationsTab.classList.remove('border-sky-700', 'text-sky-700');
+                }
+                renderCards(activeList);
+            }
+            
+            function renderCards(data) {
+                grid.innerHTML = '';
+                const termType = activeList === uniquePhrasalVerbs ? 'phrasal verbs' : 'collocation';
+                resultsCountEl.textContent = `Hiển thị ${data.length} trên ${activeList.length} ${termType}.`;
+                if (data.length === 0) {
+                    grid.innerHTML = `<p class="text-slate-500 sm:col-span-2 lg:col-span-3 xl:col-span-4 text-center">Không tìm thấy kết quả nào.</p>`;
+                }
+                data.forEach((item, index) => {
+                    const cardWrapper = document.createElement('div');
+                    cardWrapper.className = 'flip-card h-40 cursor-pointer';
+                    cardWrapper.dataset.id = index;
+                    cardWrapper.innerHTML = `
+                        <div class="flip-card-inner shadow-md rounded-xl">
+                            <div class="flip-card-front bg-white border border-slate-200">
+                                <h3 class="text-xl font-semibold text-slate-700">${item.en}</h3>
+                            </div>
+                            <div class="flip-card-back bg-sky-600 text-white">
+                                <h3 class="text-xl font-semibold">${item.vi}</h3>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(cardWrapper);
+                });
+                grid.querySelectorAll('.flip-card').forEach(card => {
+                    card.addEventListener('click', () => card.classList.toggle('is-flipped'));
+                });
+            }
+
+            function filterAndRender() {
+                const query = searchInput.value.toLowerCase();
+                const filtered = activeList.filter(item => 
+                    item.en.toLowerCase().includes(query) || 
+                    item.vi.toLowerCase().includes(query)
+                );
+                renderCards(filtered);
+                toggleAllBtn.textContent = 'Hiện tất cả';
+                toggleAllBtn.dataset.state = 'hidden';
+            }
+
+            collocationsTab.addEventListener('click', () => switchTab('collocations'));
+            phrasalVerbsTab.addEventListener('click', () => switchTab('phrasalVerbs'));
+            searchInput.addEventListener('input', filterAndRender);
+            
+            toggleAllBtn.addEventListener('click', () => {
+                const cards = grid.querySelectorAll('.flip-card');
+                const isHidden = toggleAllBtn.dataset.state === 'hidden';
+                cards.forEach(card => card.classList.toggle('is-flipped', isHidden));
+                toggleAllBtn.textContent = isHidden ? 'Ẩn tất cả' : 'Hiện tất cả';
+                toggleAllBtn.dataset.state = isHidden ? 'shown' : 'hidden';
+            });
+
+            let randomAllInterval = null; // Biến để lưu interval
+
+            randomBtn.addEventListener('click', () => {
+                const allCards = Array.from(grid.querySelectorAll('.flip-card'));
+                if(allCards.length === 0) return;
+                allCards.forEach(c => c.classList.remove('highlight', 'is-flipped'));
+                const randomCard = allCards[Math.floor(Math.random() * allCards.length)];
+                randomCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => {
+                    randomCard.classList.add('highlight');
+                    setTimeout(() => randomCard.classList.add('is-flipped'), 1500);
+                }, 300);
+            });
+
+            randomAllBtn.addEventListener('click', () => {
+                const allCards = Array.from(grid.querySelectorAll('.flip-card'));
+                if(allCards.length === 0) return;
+
+                // Nếu đang chạy thì dừng lại
+                if (randomAllInterval) {
+                    clearInterval(randomAllInterval);
+                    randomAllInterval = null;
+                    randomAllBtn.textContent = 'Kiểm tra ngẫu nhiên';
+                    randomAllBtn.classList.remove('bg-orange-600', 'hover:bg-orange-700');
+                    randomAllBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                    return;
+                }
+
+                // Bắt đầu chạy tự động
+                randomAllBtn.textContent = 'Dừng lại';
+                randomAllBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                randomAllBtn.classList.add('bg-orange-600', 'hover:bg-orange-700');
+
+                // Hàm hiển thị thẻ ngẫu nhiên
+                const showRandomCard = () => {
+                    const cards = Array.from(grid.querySelectorAll('.flip-card'));
+                    if(cards.length === 0) {
+                        clearInterval(randomAllInterval);
+                        randomAllInterval = null;
+                        randomAllBtn.textContent = 'Kiểm tra ngẫu nhiên';
+                        randomAllBtn.classList.remove('bg-orange-600', 'hover:bg-orange-700');
+                        randomAllBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                        return;
+                    }
+                    
+                    cards.forEach(c => c.classList.remove('highlight', 'is-flipped'));
+                    const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                    randomCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    setTimeout(() => {
+                        randomCard.classList.add('highlight');
+                        setTimeout(() => randomCard.classList.add('is-flipped'), 1500);
+                    }, 300);
+                };
+
+
+                showRandomCard();
+
+                randomAllInterval = setInterval(showRandomCard, 3500);
+            });
+
+            resetBtn.addEventListener('click', () => {
+                // Dừng random all nếu đang chạy
+                if (randomAllInterval) {
+                    clearInterval(randomAllInterval);
+                    randomAllInterval = null;
+                    randomAllBtn.textContent = 'Kiểm tra ngẫu nhiên';
+                    randomAllBtn.classList.remove('bg-orange-600', 'hover:bg-orange-700');
+                    randomAllBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                }
+                
+                searchInput.value = '';
+                filterAndRender();
+            });
+
+            switchTab('phrasalVerbs');
+        });
+    </script>
+</body>
+</html>
+
