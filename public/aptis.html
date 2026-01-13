@@ -398,14 +398,14 @@
                     
                     setTimeout(() => {
                         randomCard.classList.add('highlight');
-                        setTimeout(() => randomCard.classList.add('is-flipped'), 750);
+                        setTimeout(() => randomCard.classList.add('is-flipped'), 3000);
                     }, 300);
                 };
 
 
                 showRandomCard();
 
-                randomAllInterval = setInterval(showRandomCard, 3500);
+                randomAllInterval = setInterval(showRandomCard, 4500);
             });
 
             resetBtn.addEventListener('click', () => {
