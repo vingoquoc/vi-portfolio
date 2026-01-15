@@ -573,6 +573,43 @@
   <div id="lanterns" aria-hidden="true"></div>
 
   <script>
+    // === Page Visibility API để xử lý tab switching ===
+    let isTabActive = !document.hidden;
+    let animationIntervals = [];
+    let animationFrameId = null;
+    
+    // Lắng nghe sự kiện thay đổi tab
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        // Tab không active - dừng tất cả animation intervals
+        isTabActive = false;
+        console.log('Tab ẩn - dừng animations');
+      } else {
+        // Tab active trở lại - clear tất cả particles và khởi động lại
+        isTabActive = true;
+        console.log('Tab hiển thị - reset particles');
+        // Clear particles từ tất cả effects
+        if (window.sparkleParticles) window.sparkleParticles.length = 0;
+        if (window.confettiParticles) window.confettiParticles.length = 0;
+        // Clear canvas
+        const sparkleCanvas = document.getElementById('sparkleCanvas');
+        const confettiCanvas = document.getElementById('confettiCanvas');
+        if (sparkleCanvas) {
+          const ctx = sparkleCanvas.getContext('2d');
+          ctx.clearRect(0, 0, sparkleCanvas.width, sparkleCanvas.height);
+        }
+        if (confettiCanvas) {
+          const ctx = confettiCanvas.getContext('2d');
+          ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        }
+        // Clear floating DOM elements (lanterns, petals)
+        const lanterns = document.querySelectorAll('.lantern');
+        lanterns.forEach(el => el.remove());
+        const petals = document.querySelectorAll('.petal');
+        petals.forEach(el => el.remove());
+      }
+    });
+
     // Sparkle canvas animation
     (function(){
       const canvas = document.getElementById('sparkleCanvas');
@@ -582,8 +619,11 @@
       window.addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
 
       const particles = [];
+      window.sparkleParticles = particles; // Expose để có thể clear từ visibility API
+      
       function rand(min,max){ return Math.random()*(max-min)+min; }
       function spawnSpark(x,y){
+        if (!isTabActive) return; // Không spawn khi tab ẩn
         particles.push({
           x: x == null ? rand(0,W) : x,
           y: y == null ? rand(0,H) : y,
@@ -594,16 +634,19 @@
           size: rand(2,8),
           hue: Math.floor(rand(30,50)) + (Math.random()<0.5?0:200) // warm or cool
         });
-        if (particles.length>720) particles.shift();
+        if (particles.length>720) particles.shift(); // khôi phục về 720
       }
       // ambient spawn
-      setInterval(()=>{
-        for (let i=0;i<3;i++) spawnSpark();
-      }, 120);
+      const sparkleInterval = setInterval(()=>{
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        for (let i=0;i<3;i++) spawnSpark(); // khôi phục về 3
+      }, 120); // khôi phục về 120ms
+      animationIntervals.push(sparkleInterval);
 
       // mouse sparkle on move
       let lastMove = 0;
       window.addEventListener('mousemove', (e)=>{
+        if (!isTabActive) return; // Không spawn khi tab ẩn
         const t = Date.now();
         if (t-lastMove>20){
           for (let i=0;i<2;i++) spawnSpark(e.clientX + rand(-10,10), e.clientY + rand(-10,10));
@@ -612,6 +655,11 @@
       });
 
       function draw(){
+        if (!isTabActive) {
+          // Dừng draw khi tab ẩn
+          animationFrameId = requestAnimationFrame(draw);
+          return;
+        }
         // semi-transparent clear for trailing effect
         ctx.fillStyle = 'rgba(0,0,0,0.06)';
         ctx.fillRect(0,0,W,H);
@@ -631,20 +679,22 @@
           ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill();
         }
         ctx.globalCompositeOperation = 'source-over';
-        requestAnimationFrame(draw);
+        animationFrameId = requestAnimationFrame(draw);
       }
       draw();
 
       // occasional sparkle bursts (firework-like)
-      setInterval(()=>{
+      const burstInterval = setInterval(()=>{
+        if (!isTabActive) return; // Không spawn khi tab ẩn
         const cx = rand(W*0.15,W*0.85);
         const cy = rand(H*0.15,H*0.45);
-        for (let i=0;i<40;i++){
+        for (let i=0;i<40;i++){ // khôi phục về 40
           const a = Math.random()*Math.PI*2;
           const s = rand(2,10);
           particles.push({ x:cx, y:cy, vx: Math.cos(a)*rand(0.5,3.2), vy: Math.sin(a)*rand(0.5,3.2), life: rand(40,110), age:0, size: s, hue: Math.floor(rand(25,60)) });
         }
-      }, 4500 + Math.random()*3500);
+      }, 4500 + Math.random()*3500); // khôi phục về thời gian ban đầu
+      animationIntervals.push(burstInterval);
 
       // subtle pulse on numbers occasionally
       setInterval(()=>{
@@ -661,6 +711,7 @@
     (function(){
       const container = document.getElementById('lanterns');
       function spawnLantern(){
+        if (!isTabActive) return; // Không spawn khi tab ẩn
         const el = document.createElement('div');
         el.className = 'lantern';
         const left = Math.random()*100; // vw
@@ -688,9 +739,12 @@
         setTimeout(()=>{ el.remove(); }, (parseFloat(dur)+parseFloat(delay)+0.6)*1000);
       }
       // spawn irregularly
-      setInterval(()=>{ spawnLantern(); }, 1800 + Math.random()*1400);
+      const lanternInterval = setInterval(()=>{ 
+        if (isTabActive) spawnLantern(); 
+      }, 1800 + Math.random()*1400); // khôi phục về thời gian ban đầu
+      animationIntervals.push(lanternInterval);
       // spawn a couple at start
-      for (let i=0;i<3;i++) setTimeout(spawnLantern, i*600);
+      for (let i=0;i<3;i++) setTimeout(()=>{ if (isTabActive) spawnLantern(); }, i*600);
     })();
 
     // Confetti simple implementation
@@ -701,14 +755,23 @@
       window.addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
 
       const confetti = [];
+      window.confettiParticles = confetti; // Expose để có thể clear từ visibility API
       const colors = ['#ffd700','#ffb74d','#ff5252','#ff4081','#8bc34a'];
-      function spawnConfetti(x,y,count=24){
+      
+      function spawnConfetti(x,y,count=24){ // khôi phục về 24
+        if (!isTabActive) return; // Không spawn khi tab ẩn
         for (let i=0;i<count;i++){
           confetti.push({ x:x, y:y, vx:(Math.random()-0.5)*6, vy:(Math.random()*-6)-1, rot:Math.random()*360, vr: (Math.random()-0.5)*10, size: 6+Math.random()*8, color: colors[Math.floor(Math.random()*colors.length)], life:90+Math.random()*80, age:0 });
         }
-        if (confetti.length>800) confetti.splice(0, confetti.length-800);
+        if (confetti.length>800) confetti.splice(0, confetti.length-800); // khôi phục về 800
       }
+      
       function draw(){
+        if (!isTabActive) {
+          // Dừng draw khi tab ẩn
+          requestAnimationFrame(draw);
+          return;
+        }
         ctx.clearRect(0,0,W,H);
         for (let i=confetti.length-1;i>=0;i--){
           const p = confetti[i]; p.age++; if (p.age>p.life) { confetti.splice(i,1); continue; }
@@ -729,7 +792,11 @@
       });
 
       // occasional confetti near top for extra glam
-      setInterval(()=>{ spawnConfetti(Math.random()*W*0.6 + W*0.2, Math.random()*H*0.25 + H*0.05, 20); }, 7000 + Math.random()*6000);
+      const confettiInterval = setInterval(()=>{ 
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        spawnConfetti(Math.random()*W*0.6 + W*0.2, Math.random()*H*0.25 + H*0.05, 20); // khôi phục về 20
+      }, 7000 + Math.random()*6000); // khôi phục về thời gian ban đầu
+      animationIntervals.push(confettiInterval);
 
       // expose for manual trigger
       window.tetSpawnConfetti = (x,y,c)=> spawnConfetti(x||W/2, y||H/3, c||36);
@@ -787,6 +854,7 @@
     // floating petals/hearts
     (function(){
       function spawnPetal(){
+        if (!isTabActive) return; // Không spawn khi tab ẩn
         const el = document.createElement('div'); el.className='petal';
         const left = Math.random()*100; el.style.left = left + 'vw';
         const duration = 8 + Math.random()*8; const delay = Math.random()*2;
@@ -803,7 +871,10 @@
         setTimeout(()=>el.remove(), (duration + delay + 0.6)*1000);
       }
       // spawn sparsely
-      setInterval(()=>{ if (Math.random()<0.7) spawnPetal(); }, 1400 + Math.random()*1000);
+      const petalInterval = setInterval(()=>{ 
+        if (Math.random()<0.7 && isTabActive) spawnPetal(); // khôi phục về 0.7
+      }, 1400 + Math.random()*1000); // khôi phục về thời gian ban đầu
+      animationIntervals.push(petalInterval);
       for (let i=0;i<2;i++) setTimeout(spawnPetal, i*800);
     })();
 
