@@ -96,6 +96,13 @@
     .count-num.pulse {
       text-shadow: 0 0 18px rgba(255,220,100,0.9), 0 0 32px rgba(255,120,80,0.6);
     }
+    
+    /* Music button pulse animation */
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.05); opacity: 0.4; }
+      100% { transform: scale(1); opacity: 0.7; }
+    }
   </style>
   <!-- Override: make page background yellow and count numbers larger and styled -->
   <style id="tet-override">
@@ -469,14 +476,28 @@
       <!-- Music note icon when playing -->
       <g id="musicNote" style="opacity: 0; transition: opacity 0.3s ease;">
         <circle cx="45" cy="15" r="8" fill="#d32f2f" opacity="0.9"/>
-        <text x="45" y="20" text-anchor="middle" fill="white" font-size="8">♪</text>
+        <!-- Music note for Tham Co Tri -->
+        <text id="playMusicIcon" x="45" y="20" text-anchor="middle" fill="white" font-size="8" style="display: block;">♪</text>
+        <!-- Tet icon for Tet music -->
+        <g id="playTetIcon" style="display: none;">
+          <rect x="41" y="12" width="8" height="6" rx="1" fill="white" transform="scale(0.8)"/>
+          <circle cx="45" cy="18" r="2" fill="white" transform="scale(0.6)"/>
+        </g>
       </g>
     </svg>
+    <!-- Pulse animation to attract attention -->
+    <div id="musicPulse" style="position: absolute; inset: 0; border-radius: 50%; background: rgba(174, 234, 0, 0.3); animation: pulse 2s infinite; pointer-events: none;"></div>
+  </div>
+
+  <!-- Music prompt notification -->
+  <div id="musicPrompt" style="position: fixed; bottom: 80px; right: 16px; z-index: 11; background: rgba(215, 38, 61, 0.95); color: white; padding: 8px 12px; border-radius: 8px; font-size: 14px; max-width: 200px; text-align: center; transform: translateY(10px); opacity: 0; transition: all 0.3s ease;">
+    🎵 Click để thưởng thức âm nhạc!
+    <div style="position: absolute; bottom: -6px; right: 20px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid rgba(215, 38, 61, 0.95);"></div>
   </div>
 
   <!-- Hidden audio element -->
   <audio id="tetMusic" loop preload="auto" autoplay>
-    <source src="audio/thamcotri.mp3" type="audio/mpeg">
+    <source id="audioSource" src="audio/thamcotri.mp3" type="audio/mpeg">
   </audio>
 
   <!-- Hoa mai vàng góc trái trên -->
@@ -796,72 +817,119 @@
     })();
 
     // Music control functionality
-    let isPlaying = false;
+    let musicState = 0; // 0: off, 1: Tham Co Tri, 2: Tet
+    const songs = [
+      { name: '🔇 Tắt nhạc', file: '', iconType: 'off' },
+      { name: '🎵 Thăm Cô Trí', file: 'audio/thamcotri.mp3', iconType: 'music' },
+      { name: '🏮 Nhạc Tết', file: 'audio/tet.mp3', iconType: 'tet' }
+    ];
+    
     const musicBtn = document.getElementById('musicBtn');
     const musicNote = document.getElementById('musicNote');
+    const playMusicIcon = document.getElementById('playMusicIcon');
+    const playTetIcon = document.getElementById('playTetIcon');
+    const musicPulse = document.getElementById('musicPulse');
+    const musicPrompt = document.getElementById('musicPrompt');
     const audio = document.getElementById('tetMusic');
+    const audioSource = document.getElementById('audioSource');
 
-    // Try to auto-start music when page loads
-    function initMusic() {
-      audio.play().then(() => {
-        isPlaying = true;
+    // Update play button icon based on current state
+    function updatePlayIcon() {
+      if (musicState === 0) {
+        // Off state - no icon visible
+        musicNote.style.opacity = '0';
+        musicBtn.title = 'Bật nhạc Tết';
+      } else {
         musicNote.style.opacity = '1';
-        musicBtn.style.transform = 'scale(0.95)';
-        musicBtn.title = 'Tắt nhạc Tết';
-      }).catch(e => {
-        console.log('Autoplay prevented by browser:', e);
-        // Browser blocks autoplay, wait for user interaction
-        document.addEventListener('click', startMusicOnInteraction, { once: true });
-        document.addEventListener('keydown', startMusicOnInteraction, { once: true });
-      });
-    }
-
-    function startMusicOnInteraction() {
-      if (!isPlaying) {
-        audio.play().then(() => {
-          isPlaying = true;
-          musicNote.style.opacity = '1';
-          musicBtn.style.transform = 'scale(0.95)';
-          musicBtn.title = 'Tắt nhạc Tết';
-        }).catch(e => console.log('Music start failed:', e));
+        const currentSong = songs[musicState];
+        if (currentSong.iconType === 'music') {
+          playMusicIcon.style.display = 'block';
+          playTetIcon.style.display = 'none';
+        } else {
+          playMusicIcon.style.display = 'none';
+          playTetIcon.style.display = 'block';
+        }
+        musicBtn.title = 'Chuyển bài/Tắt nhạc';
       }
     }
 
     function toggleMusic() {
-      if (isPlaying) {
-        // Stop music
-        audio.pause();
+      // Cycle through states: Off -> Tham Co Tri -> Tet -> Off
+      musicState = (musicState + 1) % 3;
+      
+      // Stop current music
+      audio.pause();
+      
+      if (musicState === 0) {
+        // Turn off
         musicNote.style.opacity = '0';
         musicBtn.style.transform = 'scale(1)';
-        musicBtn.title = 'Bật nhạc Tết';
-        isPlaying = false;
+        musicPulse.style.display = 'block';
+        musicPrompt.style.opacity = '0';
+        musicPrompt.style.transform = 'translateY(10px)';
       } else {
-        // Start music
-        audio.play().catch(e => {
+        // Play new song - always set source regardless of previous state
+        audioSource.src = songs[musicState].file;
+        audio.load();
+        
+        audio.play().then(() => {
+          musicNote.style.opacity = '1';
+          musicBtn.style.transform = 'scale(0.95)';
+          musicPulse.style.display = 'none';
+          musicPrompt.style.opacity = '0';
+          musicPrompt.style.transform = 'translateY(10px)';
+        }).catch(e => {
           console.log('Audio play failed:', e);
+          // Don't reset to 0, just show error
           alert('Không thể phát nhạc. Vui lòng kiểm tra file audio.');
         });
-        musicNote.style.opacity = '1';
-        musicBtn.style.transform = 'scale(0.95)';
-        musicBtn.title = 'Tắt nhạc Tết';
-        isPlaying = true;
       }
+      
+      updatePlayIcon();
     }
 
     // Initialize music when DOM is loaded
-    window.addEventListener('DOMContentLoaded', initMusic);
-
-    // Auto-pause when audio ends (though it's set to loop)
-    audio.addEventListener('ended', () => {
-      musicNote.style.opacity = '0';
-      musicBtn.style.transform = 'scale(1)';
-      isPlaying = false;
+    window.addEventListener('DOMContentLoaded', () => {
+      musicState = 1; // Start with Tham Co Tri
+      audioSource.src = songs[musicState].file;
+      audio.load();
+      updatePlayIcon();
+      
+      // Try autoplay
+      audio.play().then(() => {
+        musicNote.style.opacity = '1';
+        musicBtn.style.transform = 'scale(0.95)';
+        musicPulse.style.display = 'none';
+      }).catch(e => {
+        console.log('Autoplay prevented by browser:', e);
+        musicState = 0; // Reset to off
+        audioSource.src = ''; // Clear source
+        updatePlayIcon();
+        // Show prompt
+        setTimeout(() => {
+          if (musicState === 0) {
+            musicPrompt.style.opacity = '1';
+            musicPrompt.style.transform = 'translateY(0)';
+            musicPulse.style.display = 'block';
+            setTimeout(() => {
+              musicPrompt.style.opacity = '0';
+              musicPrompt.style.transform = 'translateY(10px)';
+            }, 5000);
+          }
+        }, 1000);
+      });
     });
 
-    // Add hover effect
+    // Add hover effects
     musicBtn.addEventListener('mouseenter', () => {
-      if (!isPlaying) {
+      if (musicState === 0) {
         musicBtn.style.transform = 'scale(1.1)';
+      }
+    });
+
+    musicBtn.addEventListener('mouseleave', () => {
+      if (musicState === 0) {
+        musicBtn.style.transform = 'scale(1)';
       }
     });
 
