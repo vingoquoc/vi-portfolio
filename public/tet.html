@@ -536,6 +536,7 @@
 
   <!-- Sparkle canvas animation -->
   <canvas id="sparkleCanvas"></canvas>
+  <canvas id="confettiCanvas"></canvas>
   <div class="tet-vignette"></div>
   <div id="lanterns" aria-hidden="true"></div>
 
@@ -720,8 +721,10 @@
     // tiny entrance animation for banner
     (function(){
       const b = document.getElementById('tet-banner');
-      b.style.transform += ' translateY(-6px)';
-      b.animate([{ transform: 'translate(-50%, -18px) scale(0.94)' }, { transform: 'translate(-50%, 0) scale(1)' }], { duration: 800, easing: 'cubic-bezier(.2,.9,.2,1)' });
+      if (b) {
+        b.style.transform += ' translateY(-6px)';
+        b.animate([{ transform: 'translate(-50%, -18px) scale(0.94)' }, { transform: 'translate(-50%, 0) scale(1)' }], { duration: 800, easing: 'cubic-bezier(.2,.9,.2,1)' });
+      }
     })();
 
   // Accessibility: keyboard trigger for chime removed
