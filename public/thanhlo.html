@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đếm ngược tới Ngày Thành lỏ trở lại quê hương Việt Nam</title>
+  <link rel="icon" type="image/png" href="icons/url/number-7.png">
+  <style>
+    body {
+      background: linear-gradient(135deg, #e8f5e8 0%, #d4e4aa 50%, #a4b494 100%);
+      font-family: 'Inter', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #2d5016;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .countdown {
+      display: flex;
+      gap: 2rem;
+      background: rgba(248, 250, 243, 0.9);
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2rem 3rem;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      border: 3px solid rgba(139, 165, 94, 0.3);
+    }
+    .countdown-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .label {
+      font-size: 1rem;
+      color: #2d5016;
+      margin-top: 0.5rem;
+    }
+    .info {
+      margin-top: 2rem;
+      color: #555;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    /* full-screen canvas for sparkles */
+    #sparkleCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 6;
+      mix-blend-mode: screen;
+    }
+    /* soft vignette and glow for countryside look */
+    .tet-vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 20%, rgba(180, 220, 150, 0.08), rgba(139, 165, 94, 0.06) 30%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+      z-index: 2;
+    }
+    /* floating rice stalks container */
+    #lanterns {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      overflow: hidden;
+    }
+    .lantern {
+      position: absolute;
+      width: 48px;
+      height: 64px;
+      transform-origin: center bottom;
+      opacity: 0;
+      filter: drop-shadow(0 6px 14px rgba(45, 80, 22, 0.35));
+      animation: floatUp linear forwards;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(0.9) rotate(-6deg); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(-110vh) scale(1.05) rotate(6deg); opacity: 0; }
+    }
+    /* little twinkle pulse for countdown numbers */
+    .count-num {
+      transition: text-shadow 300ms ease;
+    }
+    .count-num.pulse {
+      text-shadow: 0 0 18px rgba(255,220,100,0.9), 0 0 32px rgba(255,120,80,0.6);
+    }
+    
+    /* Music button pulse animation */
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.05); opacity: 0.4; }
+      100% { transform: scale(1); opacity: 0.7; }
+    }
+  </style>
+  <!-- Override: make page background yellow and count numbers larger and styled -->
+  <style id="tet-override">
+    body {
+      background: linear-gradient(120deg, #fff9d6 0%, #ffe066 40%, #ffd000 100%) !important;
+    }
+    /* Make main numbers large and festive */
+    .count-num, .count-num span, .count-num > span, .count-num[id] {
+      font-size: 96px !important;
+      line-height: 1 !important;
+      color: #b71c1c !important; /* deep festive red */
+      font-weight: 800 !important;
+      text-shadow: 0 6px 20px rgba(183,28,28,0.18), 0 0 36px rgba(255,215,64,0.12);
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)) !important;
+    }
+    .count-label {
+      font-size: 14px !important;
+      color: rgba(34,34,34,0.9) !important;
+      margin-top: 6px !important;
+    }
+    /* Responsive: smaller on phones */
+    @media (max-width: 800px) {
+      .count-num, .count-num span, .count-num > span, .count-num[id] {
+        font-size: 56px !important;
+      }
+      h1 { font-size: 1.4rem !important; }
+    }
+  </style>
+  <!-- Load calligraphy + Vietnamese-safe fonts and apply them -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif:wght@400;700&display=swap&subset=vietnamese" rel="stylesheet">
+  <style>
+    /* Use a decorative script for headings/labels, but fall back to Noto Serif for proper Vietnamese diacritics */
+    h1, .count-label {
+      font-family: 'Great Vibes', 'Noto Serif', serif !important;
+      color: #8b0000 !important;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+    /* Ensure numeric counters use a sturdy serif that supports locales */
+    .count-num, .count-num span {
+      font-family: 'Noto Serif', Georgia, 'Times New Roman', serif !important;
+    }
+  </style>
+  <!-- Tăng cấp giao diện: nền động, banner thư pháp, confetti, chime (tùy chọn), number cards -->
+  <style id="tet-enhance-styles">
+    /* animated golden shimmer background */
+    @keyframes goldShift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
+    body { background: linear-gradient(120deg, #fff9d6 0%, #ffe066 40%, #ffd000 100%) !important; background-size: 200% 200%; animation: goldShift 18s ease-in-out infinite; }
+
+    /* banner */
+    #tet-banner {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 8;
+      background: rgba(255, 245, 225, 0.95); padding: 10px 22px; border-radius: 36px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      border: 2px solid rgba(255,215,64,0.14);
+      font-size: 1.6rem; color: #8b0000; font-family: 'Great Vibes', 'Noto Serif', serif;
+    }
+
+    /* count number cards */
+    .count-num {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+      padding: 18px 28px; border-radius: 18px; display:inline-block; min-width:120px; text-align:center;
+      box-shadow: 0 10px 30px rgba(183,28,28,0.08), inset 0 -6px 12px rgba(0,0,0,0.04);
+      border: 2px solid rgba(255,215,64,0.12);
+    }
+
+    /* chime button */
+    #chimeBtn { position: fixed; top: 20px; right: 18px; z-index: 9; background:#d32f2f; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(211,47,47,0.18); }
+    #chimeBtn[aria-pressed="true"]{ background:#8b0000; }
+
+    /* confetti canvas sits above sparkles */
+    #confettiCanvas{ position: fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:7; }
+  </style>
+  <!-- Warm & happy upgrades: bokeh, sunbeam, floating petals/hearts, ambient audio control -->
+  <style id="tet-warmup">
+    /* warm color overlay to boost happiness */
+    .warm-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 4;
+      background: radial-gradient(circle at 20% 20%, rgba(255,244,214,0.10), rgba(255,215,120,0.06) 12%, rgba(0,0,0,0) 30%),
+                  radial-gradient(circle at 80% 80%, rgba(255,230,200,0.06), rgba(255,190,80,0.02) 18%, rgba(0,0,0,0) 40%);
+      mix-blend-mode: overlay;
+    }
+
+    /* soft sunbeam */
+    #sunbeam { position: fixed; inset: 0; z-index:3; pointer-events:none; }
+    #sunbeam:before {
+      content: ''; position: absolute; left: -20%; top: -10%; width: 140%; height: 60%;
+      background: linear-gradient(120deg, rgba(255,245,190,0.14), rgba(255,200,80,0.06) 40%, rgba(255,200,80,0) 70%);
+      transform: rotate(-8deg); filter: blur(36px) saturate(1.1);
+      animation: beamShift 10s ease-in-out infinite;
+    }
+    @keyframes beamShift { 0%{transform:translateX(-6%) rotate(-8deg)}50%{transform:translateX(6%) rotate(-6deg)}100%{transform:translateX(-6%) rotate(-8deg)} }
+
+    /* bokeh circles */
+    #bokeh { position: fixed; inset:0; pointer-events:none; z-index:5; }
+    #bokeh .dot { position:absolute; border-radius:50%; filter: blur(6px); opacity:0.0; mix-blend-mode: screen; }
+    /* pre-create sizes and positions via JS for randomness */
+
+    /* floating petals/hearts */
+    .petal { position: fixed; width: 18px; height: 24px; pointer-events:none; z-index:9; opacity:0.95; transform-origin:center; }
+    .petal svg { width:100%; height:100%; }
+
+    /* ambient audio play button */
+    #ambientBtn { position: fixed; top: 20px; right: 110px; z-index: 9; background: rgba(255,235,200,0.95); color:#8b0000; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+    #ambientBtn[aria-pressed='true'] { background: #ffdca8; }
+  </style>
+  <!-- Responsive tweaks: stack countdown on small screens, scale numbers, reduce/disable heavy effects on mobile -->
+  <style id="tet-responsive">
+    .countdown { flex-wrap: wrap; justify-content: center; align-items: center; }
+    .countdown-item { min-width: 110px; }
+    /* fluid number sizing while preserving large desktop size */
+    .count-num { font-size: clamp(36px, 8vw, 96px) !important; }
+    /* ensure labels stay subtle */
+    .label { font-size: clamp(12px, 1.6vw, 16px) !important; }
+
+    @media (max-width: 900px) {
+      .countdown { gap: 1rem; padding: 1rem 1.2rem; }
+      .countdown-item { min-width: 90px; }
+    }
+    @media (max-width: 640px) {
+      /* stack vertically on very narrow screens */
+      .countdown { flex-direction: column; gap: 14px; padding: 1rem; }
+      .countdown-item { width: 100%; display:flex; justify-content:center; align-items:center; gap: 12px; }
+      .count-num { font-size: clamp(30px, 12vw, 56px) !important; }
+      .label { font-size: 13px !important; }
+      /* disable heavy visual effects to save CPU/battery on mobile */
+      #sparkleCanvas, #confettiCanvas, #lanterns, #bokeh, .tet-vignette, .warm-overlay { display: none !important; }
+    }
+
+    /* prefer-reduced-motion: reduce animations for users who want fewer motion effects */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+
+  <!-- Load calligraphy + Vietnamese-safe fonts and apply them -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif:wght@400;700&display=swap&subset=vietnamese" rel="stylesheet">
+  <style>
+    /* Use a decorative script for headings/labels, but fall back to Noto Serif for proper Vietnamese diacritics */
+    h1, .count-label {
+      font-family: 'Great Vibes', 'Noto Serif', serif !important;
+      color: #8b0000 !important;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+    /* Ensure numeric counters use a sturdy serif that supports locales */
+    .count-num, .count-num span {
+      font-family: 'Noto Serif', Georgia, 'Times New Roman', serif !important;
+    }
+  </style>
+  <!-- Tăng cấp giao diện: nền động, banner thư pháp, confetti, chime (tùy chọn), number cards -->
+  <style id="tet-enhance-styles">
+    /* animated golden shimmer background */
+    @keyframes goldShift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
+    body { background: linear-gradient(120deg, #fff9d6 0%, #ffe066 40%, #ffd000 100%) !important; background-size: 200% 200%; animation: goldShift 18s ease-in-out infinite; }
+
+    /* banner */
+    #tet-banner {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 8;
+      background: rgba(255, 245, 225, 0.95); padding: 10px 22px; border-radius: 36px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      border: 2px solid rgba(255,215,64,0.14);
+      font-size: 1.6rem; color: #8b0000; font-family: 'Great Vibes', 'Noto Serif', serif;
+    }
+
+    /* count number cards */
+    .count-num {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+      padding: 18px 28px; border-radius: 18px; display:inline-block; min-width:120px; text-align:center;
+      box-shadow: 0 10px 30px rgba(183,28,28,0.08), inset 0 -6px 12px rgba(0,0,0,0.04);
+      border: 2px solid rgba(255,215,64,0.12);
+    }
+
+    /* chime button */
+    #chimeBtn { position: fixed; top: 20px; right: 18px; z-index: 9; background:#d32f2f; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(211,47,47,0.18); }
+    #chimeBtn[aria-pressed="true"]{ background:#8b0000; }
+
+    /* confetti canvas sits above sparkles */
+    #confettiCanvas{ position: fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:7; }
+  </style>
+  <!-- Warm & happy upgrades: bokeh, sunbeam, floating petals/hearts, ambient audio control -->
+  <style id="tet-warmup">
+    /* warm color overlay to boost happiness */
+    .warm-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 4;
+      background: radial-gradient(circle at 20% 20%, rgba(255,244,214,0.10), rgba(255,215,120,0.06) 12%, rgba(0,0,0,0) 30%),
+                  radial-gradient(circle at 80% 80%, rgba(255,230,200,0.06), rgba(255,190,80,0.02) 18%, rgba(0,0,0,0) 40%);
+      mix-blend-mode: overlay;
+    }
+
+    /* soft sunbeam */
+    #sunbeam { position: fixed; inset: 0; z-index:3; pointer-events:none; }
+    #sunbeam:before {
+      content: ''; position: absolute; left: -20%; top: -10%; width: 140%; height: 60%;
+      background: linear-gradient(120deg, rgba(255,245,190,0.14), rgba(255,200,80,0.06) 40%, rgba(255,200,80,0) 70%);
+      transform: rotate(-8deg); filter: blur(36px) saturate(1.1);
+      animation: beamShift 10s ease-in-out infinite;
+    }
+    @keyframes beamShift { 0%{transform:translateX(-6%) rotate(-8deg)}50%{transform:translateX(6%) rotate(-6deg)}100%{transform:translateX(-6%) rotate(-8deg)} }
+
+    /* bokeh circles */
+    #bokeh { position: fixed; inset:0; pointer-events:none; z-index:5; }
+    #bokeh .dot { position:absolute; border-radius:50%; filter: blur(6px); opacity:0.0; mix-blend-mode: screen; }
+    /* pre-create sizes and positions via JS for randomness */
+
+    /* floating petals/hearts */
+    .petal { position: fixed; width: 18px; height: 24px; pointer-events:none; z-index:9; opacity:0.95; transform-origin:center; }
+    .petal svg { width:100%; height:100%; }
+
+    /* ambient audio play button */
+    #ambientBtn { position: fixed; top: 20px; right: 110px; z-index: 9; background: rgba(255,235,200,0.95); color:#8b0000; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+    #ambientBtn[aria-pressed='true'] { background: #ffdca8; }
+  </style>
+  <!-- Responsive tweaks: stack countdown on small screens, scale numbers, reduce/disable heavy effects on mobile -->
+  <style id="tet-responsive">
+    .countdown { flex-wrap: wrap; justify-content: center; align-items: center; }
+    .countdown-item { min-width: 110px; }
+    /* fluid number sizing while preserving large desktop size */
+    .count-num { font-size: clamp(36px, 8vw, 96px) !important; }
+    /* ensure labels stay subtle */
+    .label { font-size: clamp(12px, 1.6vw, 16px) !important; }
+
+    @media (max-width: 900px) {
+      .countdown { gap: 1rem; padding: 1rem 1.2rem; }
+      .countdown-item { min-width: 90px; }
+    }
+    @media (max-width: 640px) {
+      /* stack vertically on very narrow screens */
+      .countdown { flex-direction: column; gap: 14px; padding: 1rem; }
+      .countdown-item { width: 100%; display:flex; justify-content:center; align-items:center; gap: 12px; }
+      .count-num { font-size: clamp(30px, 12vw, 56px) !important; }
+      .label { font-size: 13px !important; }
+      /* disable heavy visual effects to save CPU/battery on mobile */
+      #sparkleCanvas, #confettiCanvas, #lanterns, #bokeh, .tet-vignette, .warm-overlay { display: none !important; }
+    }
+
+    /* prefer-reduced-motion: reduce animations for users who want fewer motion effects */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+
+  <!-- Load calligraphy + Vietnamese-safe fonts and apply them -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif:wght@400;700&display=swap&subset=vietnamese" rel="stylesheet">
+  <style>
+    /* Use a decorative script for headings/labels, but fall back to Noto Serif for proper Vietnamese diacritics */
+    h1, .count-label {
+      font-family: 'Great Vibes', 'Noto Serif', serif !important;
+      color: #8b0000 !important;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+    /* Ensure numeric counters use a sturdy serif that supports locales */
+    .count-num, .count-num span {
+      font-family: 'Noto Serif', Georgia, 'Times New Roman', serif !important;
+    }
+  </style>
+  <!-- Tăng cấp giao diện: nền động, banner thư pháp, confetti, chime (tùy chọn), number cards -->
+  <style id="tet-enhance-styles">
+    /* animated golden shimmer background */
+    @keyframes goldShift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
+    body { background: linear-gradient(120deg, #fff9d6 0%, #ffe066 40%, #ffd000 100%) !important; background-size: 200% 200%; animation: goldShift 18s ease-in-out infinite; }
+
+    /* banner */
+    #tet-banner {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 8;
+      background: rgba(255, 245, 225, 0.95); padding: 10px 22px; border-radius: 36px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      border: 2px solid rgba(255,215,64,0.14);
+      font-size: 1.6rem; color: #8b0000; font-family: 'Great Vibes', 'Noto Serif', serif;
+    }
+
+    /* count number cards */
+    .count-num {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+      padding: 18px 28px; border-radius: 18px; display:inline-block; min-width:120px; text-align:center;
+      box-shadow: 0 10px 30px rgba(183,28,28,0.08), inset 0 -6px 12px rgba(0,0,0,0.04);
+      border: 2px solid rgba(255,215,64,0.12);
+    }
+
+    /* chime button */
+    #chimeBtn { position: fixed; top: 20px; right: 18px; z-index: 9; background:#d32f2f; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(211,47,47,0.18); }
+    #chimeBtn[aria-pressed="true"]{ background:#8b0000; }
+
+    /* confetti canvas sits above sparkles */
+    #confettiCanvas{ position: fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:7; }
+  </style>
+  <!-- Warm & happy upgrades: bokeh, sunbeam, floating petals/hearts, ambient audio control -->
+  <style id="tet-warmup">
+    /* warm color overlay to boost happiness */
+    .warm-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 4;
+      background: radial-gradient(circle at 20% 20%, rgba(255,244,214,0.10), rgba(255,215,120,0.06) 12%, rgba(0,0,0,0) 30%),
+                  radial-gradient(circle at 80% 80%, rgba(255,230,200,0.06), rgba(255,190,80,0.02) 18%, rgba(0,0,0,0) 40%);
+      mix-blend-mode: overlay;
+    }
+
+    /* soft sunbeam */
+    #sunbeam { position: fixed; inset: 0; z-index:3; pointer-events:none; }
+    #sunbeam:before {
+      content: ''; position: absolute; left: -20%; top: -10%; width: 140%; height: 60%;
+      background: linear-gradient(120deg, rgba(255,245,190,0.14), rgba(255,200,80,0.06) 40%, rgba(255,200,80,0) 70%);
+      transform: rotate(-8deg); filter: blur(36px) saturate(1.1);
+      animation: beamShift 10s ease-in-out infinite;
+    }
+    @keyframes beamShift { 0%{transform:translateX(-6%) rotate(-8deg)}50%{transform:translateX(6%) rotate(-6deg)}100%{transform:translateX(-6%) rotate(-8deg)} }
+
+    /* bokeh circles */
+    #bokeh { position: fixed; inset:0; pointer-events:none; z-index:5; }
+    #bokeh .dot { position:absolute; border-radius:50%; filter: blur(6px); opacity:0.0; mix-blend-mode: screen; }
+    /* pre-create sizes and positions via JS for randomness */
+
+    /* floating petals/hearts */
+    .petal { position: fixed; width: 18px; height: 24px; pointer-events:none; z-index:9; opacity:0.95; transform-origin:center; }
+    .petal svg { width:100%; height:100%; }
+
+    /* ambient audio play button */
+    #ambientBtn { position: fixed; top: 20px; right: 110px; z-index: 9; background: rgba(255,235,200,0.95); color:#8b0000; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+    #ambientBtn[aria-pressed='true'] { background: #ffdca8; }
+  </style>
+  <!-- Responsive tweaks: stack countdown on small screens, scale numbers, reduce/disable heavy effects on mobile -->
+  <style id="tet-responsive">
+    .countdown { flex-wrap: wrap; justify-content: center; align-items: center; }
+    .countdown-item { min-width: 110px; }
+    /* fluid number sizing while preserving large desktop size */
+    .count-num { font-size: clamp(36px, 8vw, 96px) !important; }
+    /* ensure labels stay subtle */
+    .label { font-size: clamp(12px, 1.6vw, 16px) !important; }
+
+    @media (max-width: 900px) {
+      .countdown { gap: 1rem; padding: 1rem 1.2rem; }
+      .countdown-item { min-width: 90px; }
+    }
+    @media (max-width: 640px) {
+      /* stack vertically on very narrow screens */
+      .countdown { flex-direction: column; gap: 14px; padding: 1rem; }
+      .countdown-item { width: 100%; display:flex; justify-content:center; align-items:center; gap: 12px; }
+      .count-num { font-size: clamp(30px, 12vw, 56px) !important; }
+      .label { font-size: 13px !important; }
+      /* disable heavy visual effects to save CPU/battery on mobile */
+      #sparkleCanvas, #confettiCanvas, #lanterns, #bokeh, .tet-vignette, .warm-overlay { display: none !important; }
+    }
+
+    /* prefer-reduced-motion: reduce animations for users who want fewer motion effects */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+  
+  <!-- ===== COUNTRYSIDE THEME OVERRIDE ===== -->
+  <style id="countryside-theme-override">
+    /* Force countryside theme colors */
+    body { 
+      background: linear-gradient(120deg, #e8f5e8 0%, #b4c99c 40%, #8fbc8f 100%) !important; 
+      background-size: 200% 200% !important; 
+      animation: greenShift 18s ease-in-out infinite !important; 
+    }
+    @keyframes greenShift { 
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%} 
+    }
+    
+    /* Countryside colors */
+    h1, .count-label { color: #2d5016 !important; }
+    .label { color: #2d5016 !important; }
+    
+    /* Update count number cards to countryside theme */
+    .count-num {
+      background: linear-gradient(180deg, rgba(245, 248, 240, 0.1), rgba(245, 248, 240, 0)) !important;
+      box-shadow: 0 10px 30px rgba(45, 80, 22, 0.12), inset 0 -6px 12px rgba(0,0,0,0.04) !important;
+      border: 2px solid rgba(139, 165, 94, 0.3) !important;
+      color: #2d5016 !important;
+    }
+    
+    /* Update banner */
+    #tet-banner {
+      background: rgba(245, 248, 240, 0.95) !important;
+      border: 2px solid rgba(139, 165, 94, 0.4) !important;
+      color: #2d5016 !important;
+    }
+    
+    /* Update chime button */
+    #chimeBtn { 
+      background: #558b2f !important; 
+      box-shadow: 0 6px 18px rgba(85,139,47,0.18) !important; 
+    }
+    #chimeBtn[aria-pressed="true"]{ background: #2d5016 !important; }
+    
+    /* Update ambient button */
+    #ambientBtn { 
+      background: rgba(245, 248, 240, 0.95) !important; 
+      color: #2d5016 !important; 
+    }
+    #ambientBtn[aria-pressed='true'] { background: rgba(180, 220, 150, 0.8) !important; }
+    
+    /* Update warm overlay to countryside tones */
+    .warm-overlay {
+      background: radial-gradient(circle at 20% 20%, rgba(180, 220, 150, 0.12), rgba(139, 165, 94, 0.08) 12%, rgba(0,0,0,0) 30%),
+                  radial-gradient(circle at 80% 80%, rgba(164, 180, 148, 0.08), rgba(116, 140, 100, 0.04) 18%, rgba(0,0,0,0) 40%) !important;
+    }
+    
+    /* Update sunbeam to countryside tones */
+    #sunbeam:before {
+      background: linear-gradient(120deg, rgba(180, 220, 150, 0.14), rgba(139, 165, 94, 0.06) 40%, rgba(139, 165, 94, 0) 70%) !important;
+    }
+    
+    /* Update vignette */
+    .tet-vignette {
+      background: radial-gradient(circle at 50% 20%, rgba(180, 220, 150, 0.08), rgba(139, 165, 94, 0.06) 30%, rgba(0,0,0,0) 70%) !important;
+    }
+    
+    /* Portrait container styles */
+    .portrait-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      z-index: 3;
+    }
+    
+    .portrait-frame {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #8fbc8f;
+      box-shadow: 
+        0 0 0 2px rgba(245, 248, 240, 0.8),
+        0 8px 32px rgba(45, 80, 22, 0.15),
+        inset 0 0 20px rgba(139, 165, 94, 0.1);
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(135deg, rgba(180, 220, 150, 0.1), rgba(139, 165, 94, 0.05));
+    }
+    
+    .portrait-frame::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #b4c99c, #8fbc8f, #a4b494);
+      z-index: -1;
+      animation: portraitGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes portraitGlow {
+      0% { opacity: 0.6; transform: scale(1); }
+      100% { opacity: 0.8; transform: scale(1.02); }
+    }
+    
+    .portrait-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    
+    .portrait-img:hover {
+      transform: scale(1.05);
+      filter: brightness(1.1) contrast(1.05);
+    }
+    
+    .portrait-decoration {
+      position: absolute;
+      top: -8px;
+      right: 8px;
+      font-size: 1.2rem;
+      animation: float 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-3px) rotate(5deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Đếm ngược tới Ngày Thành lỏ trở lại quê hương</h1>
+  
+  <!-- Thành Lỏ Portrait Section -->
+  <div class="portrait-container">
+    <div class="portrait-frame">
+      <img src="images/thanhlo.jpeg" alt="Thành Lỏ" class="portrait-img">
+      <div class="portrait-decoration">🏡</div>
+    </div>
+  </div>
+  
+  <div class="countdown" id="countdown">
+    <div class="countdown-item"><span id="days" class="count-num">0</span><span class="label">Ngày</span></div>
+    <div class="countdown-item"><span id="hours" class="count-num">0</span><span class="label">Giờ</span></div>
+    <div class="countdown-item"><span id="minutes" class="count-num">0</span><span class="label">Phút</span></div>
+    <div class="countdown-item"><span id="seconds" class="count-num">0</span><span class="label">Giây</span></div>
+  </div>
+  <div class="info">🇻🇳 Ngày Thành lỏ trở lại quê hương Việt Nam: 04/02/2026 🌾</div>
+
+  <!-- Add festive decorations -->
+  <div id="musicBtn" style="position: fixed; bottom: 16px; right: 16px; z-index: 10; cursor: pointer; transition: transform 0.2s ease;" onclick="toggleMusic()" title="Bật/Tắt nhạc quê hương">
+    <svg width="48" height="48" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="32" fill="#aeea00" />
+      <ellipse cx="32" cy="44" rx="18" ry="10" fill="#fff176" />
+      <circle cx="24" cy="28" r="6" fill="#fff" />
+      <circle cx="40" cy="28" r="6" fill="#fff" />
+      <circle cx="24" cy="28" r="3" fill="#388e3c" />
+      <circle cx="40" cy="28" r="3" fill="#388e3c" />
+      <ellipse cx="32" cy="38" rx="8" ry="4" fill="#388e3c" />
+      <rect x="28" y="48" width="8" height="4" rx="2" fill="#388e3c" />
+      <!-- Music note icon when playing -->
+      <g id="musicNote" style="opacity: 0; transition: opacity 0.3s ease;">
+        <circle cx="45" cy="15" r="8" fill="#d32f2f" opacity="0.9"/>
+        <!-- Music note for Tham Co Tri -->
+        <text id="playMusicIcon" x="45" y="20" text-anchor="middle" fill="white" font-size="8" style="display: block;">♪</text>
+        <!-- Tet icon for Tet music -->
+        <g id="playTetIcon" style="display: none;">
+          <rect x="41" y="12" width="8" height="6" rx="1" fill="white" transform="scale(0.8)"/>
+          <circle cx="45" cy="18" r="2" fill="white" transform="scale(0.6)"/>
+        </g>
+      </g>
+    </svg>
+    <!-- Pulse animation to attract attention -->
+    <div id="musicPulse" style="position: absolute; inset: 0; border-radius: 50%; background: rgba(174, 234, 0, 0.3); animation: pulse 2s infinite; pointer-events: none;"></div>
+  </div>
+
+  <!-- Music prompt notification -->
+  <div id="musicPrompt" style="position: fixed; bottom: 80px; right: 16px; z-index: 11; background: rgba(85, 139, 47, 0.95); color: white; padding: 8px 12px; border-radius: 8px; font-size: 14px; max-width: 200px; text-align: center; transform: translateY(10px); opacity: 0; transition: all 0.3s ease;">
+    🎵 Click để nghe tiếng quê hương!
+    <div style="position: absolute; bottom: -6px; right: 20px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid rgba(85, 139, 47, 0.95);"></div>
+  </div>
+
+  <!-- Hidden audio element -->
+  <audio id="tetMusic" loop preload="auto" autoplay>
+    <source id="audioSource" src="audio/thanhbao.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Cây lúa vàng góc trái trên -->
+  <svg style="position:absolute;top:24px;left:32px;width:80px;height:80px;z-index:2;" viewBox="0 0 80 80">
+    <g>
+      <!-- Rice stalk -->
+      <path d="M40 70 L40 30" stroke="#8bc34a" stroke-width="3" fill="none"/>
+      <!-- Rice grains -->
+      <ellipse cx="35" cy="30" rx="3" ry="6" fill="#fdd835" transform="rotate(-15 35 30)"/>
+      <ellipse cx="45" cy="35" rx="3" ry="6" fill="#fdd835" transform="rotate(15 45 35)"/>
+      <ellipse cx="33" cy="40" rx="3" ry="6" fill="#fdd835" transform="rotate(-20 33 40)"/>
+      <ellipse cx="47" cy="45" rx="3" ry="6" fill="#fdd835" transform="rotate(20 47 45)"/>
+      <ellipse cx="37" cy="50" rx="3" ry="6" fill="#fdd835" transform="rotate(-10 37 50)"/>
+      <ellipse cx="43" cy="55" rx="3" ry="6" fill="#fdd835" transform="rotate(10 43 55)"/>
+    </g>
+  </svg>
+  <!-- Cây tre xanh góc phải trên -->
+  <svg style="position:absolute;top:24px;right:32px;width:80px;height:80px;z-index:2;" viewBox="0 0 80 80">
+    <g>
+      <!-- Bamboo stalks -->
+      <rect x="35" y="20" width="4" height="50" fill="#689f38" rx="2"/>
+      <rect x="41" y="15" width="4" height="55" fill="#689f38" rx="2"/>
+      <!-- Bamboo segments -->
+      <line x1="33" y1="35" x2="41" y2="35" stroke="#2e7d32" stroke-width="2"/>
+      <line x1="33" y1="50" x2="41" y2="50" stroke="#2e7d32" stroke-width="2"/>
+      <line x1="39" y1="30" x2="47" y2="30" stroke="#2e7d32" stroke-width="2"/>
+      <line x1="39" y1="45" x2="47" y2="45" stroke="#2e7d32" stroke-width="2"/>
+      <line x1="39" y1="60" x2="47" y2="60" stroke="#2e7d32" stroke-width="2"/>
+      <!-- Bamboo leaves -->
+      <ellipse cx="30" cy="25" rx="8" ry="3" fill="#8bc34a" transform="rotate(-30 30 25)"/>
+      <ellipse cx="50" cy="22" rx="8" ry="3" fill="#8bc34a" transform="rotate(30 50 22)"/>
+      <ellipse cx="28" cy="40" rx="6" ry="2" fill="#8bc34a" transform="rotate(-45 28 40)"/>
+      <ellipse cx="52" cy="35" rx="6" ry="2" fill="#8bc34a" transform="rotate(45 52 35)"/>
+    </g>
+  </svg>
+
+  <!-- Fireworks effect -->
+  <svg id="firework" style="position:absolute;top:15%;left:50%;width:80px;height:80px;z-index:4;display:none;" viewBox="0 0 80 80">
+    <g id="fw-lines">
+      <line x1="40" y1="40" x2="40" y2="10" stroke="#ffd700" stroke-width="4"/>
+      <line x1="40" y1="40" x2="70" y2="40" stroke="#d7263d" stroke-width="4"/>
+      <line x1="40" y1="40" x2="40" y2="70" stroke="#ffd700" stroke-width="4"/>
+      <line x1="40" y1="40" x2="10" y2="40" stroke="#d7263d" stroke-width="4"/>
+      <line x1="40" y1="40" x2="65" y2="15" stroke="#ffd700" stroke-width="4"/>
+      <line x1="40" y1="40" x2="15" y2="65" stroke="#d7263d" stroke-width="4"/>
+    </g>
+    <circle cx="40" cy="40" r="8" fill="#ffd700"/>
+  </svg>
+  <script>
+    const targetDate = new Date('2026-02-04T00:00:00+07:00');
+    function updateCountdown() {
+      const now = new Date();
+      let diff = targetDate - now;
+      if (diff < 0) diff = 0;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+      document.getElementById('days').textContent = days;
+      document.getElementById('hours').textContent = hours;
+      document.getElementById('minutes').textContent = minutes;
+      document.getElementById('seconds').textContent = seconds;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    function showFirework() {
+      const fw = document.getElementById('firework');
+      fw.style.display = 'block';
+      setTimeout(()=>{fw.style.display='none';},1200);
+    }
+  </script>
+
+  <!-- Sparkle canvas animation -->
+  <canvas id="sparkleCanvas"></canvas>
+  <canvas id="confettiCanvas"></canvas>
+  <div class="tet-vignette"></div>
+  <div id="lanterns" aria-hidden="true"></div>
+
+  <script>
+    // === Page Visibility API để xử lý tab switching ===
+    let isTabActive = !document.hidden;
+    let animationIntervals = [];
+    let animationFrameId = null;
+    
+    // Lắng nghe sự kiện thay đổi tab
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        // Tab không active - dừng tất cả animation intervals
+        isTabActive = false;
+        console.log('Tab ẩn - dừng animations');
+      } else {
+        // Tab active trở lại - clear tất cả particles và khởi động lại
+        isTabActive = true;
+        console.log('Tab hiển thị - reset particles');
+        // Clear particles từ tất cả effects
+        if (window.sparkleParticles) window.sparkleParticles.length = 0;
+        if (window.confettiParticles) window.confettiParticles.length = 0;
+        // Clear canvas
+        const sparkleCanvas = document.getElementById('sparkleCanvas');
+        const confettiCanvas = document.getElementById('confettiCanvas');
+        if (sparkleCanvas) {
+          const ctx = sparkleCanvas.getContext('2d');
+          ctx.clearRect(0, 0, sparkleCanvas.width, sparkleCanvas.height);
+        }
+        if (confettiCanvas) {
+          const ctx = confettiCanvas.getContext('2d');
+          ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        }
+        // Clear floating DOM elements (lanterns, petals)
+        const lanterns = document.querySelectorAll('.lantern');
+        lanterns.forEach(el => el.remove());
+        const petals = document.querySelectorAll('.petal');
+        petals.forEach(el => el.remove());
+      }
+    });
+
+    // Sparkle canvas animation
+    (function(){
+      const canvas = document.getElementById('sparkleCanvas');
+      const ctx = canvas.getContext('2d');
+      let W = canvas.width = innerWidth;
+      let H = canvas.height = innerHeight;
+      window.addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
+
+      const particles = [];
+      window.sparkleParticles = particles; // Expose để có thể clear từ visibility API
+      
+      function rand(min,max){ return Math.random()*(max-min)+min; }
+      function spawnSpark(x,y){
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        particles.push({
+          x: x == null ? rand(0,W) : x,
+          y: y == null ? rand(0,H) : y,
+          vx: rand(-0.2,0.2),
+          vy: rand(-0.6,-0.1),
+          life: rand(60,160),
+          age: 0,
+          size: rand(2,8),
+          hue: Math.floor(rand(30,50)) + (Math.random()<0.5?0:200) // warm or cool
+        });
+        if (particles.length>720) particles.shift(); // khôi phục về 720
+      }
+      // ambient spawn
+      const sparkleInterval = setInterval(()=>{
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        for (let i=0;i<3;i++) spawnSpark(); // khôi phục về 3
+      }, 120); // khôi phục về 120ms
+      animationIntervals.push(sparkleInterval);
+
+      // mouse sparkle on move
+      let lastMove = 0;
+      window.addEventListener('mousemove', (e)=>{
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        const t = Date.now();
+        if (t-lastMove>20){
+          for (let i=0;i<2;i++) spawnSpark(e.clientX + rand(-10,10), e.clientY + rand(-10,10));
+          lastMove = t;
+        }
+      });
+
+      function draw(){
+        if (!isTabActive) {
+          // Dừng draw khi tab ẩn
+          animationFrameId = requestAnimationFrame(draw);
+          return;
+        }
+        // semi-transparent clear for trailing effect
+        ctx.fillStyle = 'rgba(0,0,0,0.06)';
+        ctx.fillRect(0,0,W,H);
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i=particles.length-1;i>=0;i--){
+          const p = particles[i];
+          p.x += p.vx; p.y += p.vy; p.age++;
+          const lifeRatio = 1 - p.age / p.life;
+          if (lifeRatio <= 0){ particles.splice(i,1); continue; }
+          const alpha = lifeRatio*0.9;
+          const r = p.size * (1 + (1-lifeRatio));
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r*2);
+          g.addColorStop(0, `hsla(${p.hue},95%,70%,${alpha})`);
+          g.addColorStop(0.5, `hsla(${p.hue},80%,60%,${alpha*0.35})`);
+          g.addColorStop(1, `hsla(${p.hue},80%,55%,0)`);
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2); ctx.fill();
+        }
+        ctx.globalCompositeOperation = 'source-over';
+        animationFrameId = requestAnimationFrame(draw);
+      }
+      draw();
+
+      // occasional sparkle bursts (firework-like)
+      const burstInterval = setInterval(()=>{
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        const cx = rand(W*0.15,W*0.85);
+        const cy = rand(H*0.15,H*0.45);
+        for (let i=0;i<40;i++){ // khôi phục về 40
+          const a = Math.random()*Math.PI*2;
+          const s = rand(2,10);
+          particles.push({ x:cx, y:cy, vx: Math.cos(a)*rand(0.5,3.2), vy: Math.sin(a)*rand(0.5,3.2), life: rand(40,110), age:0, size: s, hue: Math.floor(rand(25,60)) });
+        }
+      }, 4500 + Math.random()*3500); // khôi phục về thời gian ban đầu
+      animationIntervals.push(burstInterval);
+
+      // subtle pulse on numbers occasionally
+      setInterval(()=>{
+        const nums = document.querySelectorAll('.count-num');
+        const idx = Math.floor(Math.random()*nums.length);
+        if (nums[idx]){
+          nums[idx].classList.add('pulse');
+          setTimeout(()=>nums[idx].classList.remove('pulse'), 900);
+        }
+      }, 1200);
+    })();
+
+    // Floating lanterns spawn
+    (function(){
+      const container = document.getElementById('lanterns');
+      function spawnLantern(){
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        const el = document.createElement('div');
+        el.className = 'lantern';
+        const left = Math.random()*100; // vw
+        el.style.left = left + 'vw';
+        const delay = Math.random()*2;
+        const dur = 12 + Math.random()*8;
+        el.style.animationDuration = dur + 's';
+        el.style.animationDelay = delay + 's';
+        el.style.opacity = 0;
+        // simple lantern SVG inside
+        el.innerHTML = `
+          <svg viewBox="0 0 48 64" width="48" height="64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g" x1="0" x2="1">
+                <stop offset="0%" stop-color="#ffd54f" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#d32f2f" stop-opacity="0.95"/>
+              </linearGradient>
+            </defs>
+            <ellipse cx="24" cy="28" rx="18" ry="22" fill="url(#g)" stroke="#fff1c4" stroke-opacity="0.12"/>
+            <rect x="22" y="6" width="4" height="8" fill="#ffd54f"/>
+            <rect x="22" y="52" width="4" height="8" fill="#ffd54f"/>
+          </svg>`;
+        container.appendChild(el);
+        // cleanup
+        setTimeout(()=>{ el.remove(); }, (parseFloat(dur)+parseFloat(delay)+0.6)*1000);
+      }
+      // spawn irregularly
+      const lanternInterval = setInterval(()=>{ 
+        if (isTabActive) spawnLantern(); 
+      }, 1800 + Math.random()*1400); // khôi phục về thời gian ban đầu
+      animationIntervals.push(lanternInterval);
+      // spawn a couple at start
+      for (let i=0;i<3;i++) setTimeout(()=>{ if (isTabActive) spawnLantern(); }, i*600);
+    })();
+
+    // Confetti simple implementation
+    (function(){
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      let W = canvas.width = innerWidth; let H = canvas.height = innerHeight;
+      window.addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
+
+      const confetti = [];
+      window.confettiParticles = confetti; // Expose để có thể clear từ visibility API
+      const colors = ['#ffd700','#ffb74d','#ff5252','#ff4081','#8bc34a'];
+      
+      function spawnConfetti(x,y,count=24){ // khôi phục về 24
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        for (let i=0;i<count;i++){
+          confetti.push({ x:x, y:y, vx:(Math.random()-0.5)*6, vy:(Math.random()*-6)-1, rot:Math.random()*360, vr: (Math.random()-0.5)*10, size: 6+Math.random()*8, color: colors[Math.floor(Math.random()*colors.length)], life:90+Math.random()*80, age:0 });
+        }
+        if (confetti.length>800) confetti.splice(0, confetti.length-800); // khôi phục về 800
+      }
+      
+      function draw(){
+        if (!isTabActive) {
+          // Dừng draw khi tab ẩn
+          requestAnimationFrame(draw);
+          return;
+        }
+        ctx.clearRect(0,0,W,H);
+        for (let i=confetti.length-1;i>=0;i--){
+          const p = confetti[i]; p.age++; if (p.age>p.life) { confetti.splice(i,1); continue; }
+          p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.rot += p.vr*0.5;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+          ctx.fillStyle = p.color; ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+          ctx.restore();
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+
+      // tie confetti bursts to existing firework bursts: override existing setInterval if present
+      // We'll listen for a custom event 'tet:burst' that other scripts can dispatch
+      window.addEventListener('tet:burst', (e)=>{
+        const {x,y}= e.detail || { x: W/2, y: H/3 };
+        spawnConfetti(x,y,48);
+      });
+
+      // occasional confetti near top for extra glam
+      const confettiInterval = setInterval(()=>{ 
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        spawnConfetti(Math.random()*W*0.6 + W*0.2, Math.random()*H*0.25 + H*0.05, 20); // khôi phục về 20
+      }, 7000 + Math.random()*6000); // khôi phục về thời gian ban đầu
+      animationIntervals.push(confettiInterval);
+
+      // expose for manual trigger
+      window.tetSpawnConfetti = (x,y,c)=> spawnConfetti(x||W/2, y||H/3, c||36);
+    })();
+
+    // When the sparkle/firework script creates bursts, dispatch event
+    // Patch showFirework if exists
+    if (typeof showFirework === 'function'){
+      const originalShow = showFirework;
+      window.showFirework = function(){
+        // dispatch before to sync
+        const W = innerWidth, H = innerHeight;
+        const x = W * 0.5 + (Math.random()-0.5)*200;
+        const y = H * 0.25 + (Math.random()-0.5)*80;
+        window.dispatchEvent(new CustomEvent('tet:burst', { detail:{x,y} }));
+        originalShow();
+      }
+    }
+
+    
+    // tiny entrance animation for banner
+    (function(){
+      const b = document.getElementById('tet-banner');
+      if (b) {
+        b.style.transform += ' translateY(-6px)';
+        b.animate([{ transform: 'translate(-50%, -18px) scale(0.94)' }, { transform: 'translate(-50%, 0) scale(1)' }], { duration: 800, easing: 'cubic-bezier(.2,.9,.2,1)' });
+      }
+    })();
+
+  // Accessibility: keyboard trigger for chime removed
+  </script>
+
+  <div class="warm-overlay"></div>
+  <div id="sunbeam"></div>
+  <div id="bokeh" aria-hidden="true"></div>
+
+  <script>
+    // create bokeh dots
+    (function(){
+      const bokeh = document.getElementById('bokeh');
+      const count = 18;
+      for (let i=0;i<count;i++){
+        const d = document.createElement('div'); d.className='dot';
+        const size = Math.floor(Math.random()*120)+40; d.style.width = size+'px'; d.style.height = size+'px';
+        d.style.left = Math.random()*100 + 'vw'; d.style.top = Math.random()*60 + 'vh';
+        d.style.background = ['rgba(255,240,200,0.18)','rgba(255,220,180,0.14)','rgba(255,200,120,0.10)'][Math.floor(Math.random()*3)];
+        d.style.animation = `bokehFade ${6 + Math.random()*8}s ${Math.random()*4}s infinite`;
+        bokeh.appendChild(d);
+      }
+      const style = document.createElement('style');
+      style.textContent = `@keyframes bokehFade { 0%{opacity:0}20%{opacity:0.7}60%{opacity:0.4}100%{opacity:0} }`;
+      document.head.appendChild(style);
+    })();
+
+    // floating petals/hearts
+    (function(){
+      function spawnPetal(){
+        if (!isTabActive) return; // Không spawn khi tab ẩn
+        const el = document.createElement('div'); el.className='petal';
+        const left = Math.random()*100; el.style.left = left + 'vw';
+        const duration = 8 + Math.random()*8; const delay = Math.random()*2;
+        el.style.transition = `transform ${duration}s linear ${delay}s, opacity ${duration}s linear ${delay}s`;
+        // heart-shaped SVG in warm tone
+        el.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.7-9.3-7.2C.9 10.8 3 6 7.8 6 9.8 6 12 7.8 12 7.8s2.2-1.8 4.2-1.8c4.8 0 6.9 4.8 4.1 7.8C19.5 16.3 12 21 12 21z" fill="#ff8a65"/></svg>`;
+        document.body.appendChild(el);
+        // trigger motion
+        requestAnimationFrame(()=>{
+          el.style.transform = `translateY(-120vh) rotate(${(Math.random()-0.5)*120}deg) scale(${0.9+Math.random()*0.6})`;
+          el.style.opacity = '0';
+        });
+        // cleanup
+        setTimeout(()=>el.remove(), (duration + delay + 0.6)*1000);
+      }
+      // spawn sparsely
+      const petalInterval = setInterval(()=>{ 
+        if (Math.random()<0.7 && isTabActive) spawnPetal(); // khôi phục về 0.7
+      }, 1400 + Math.random()*1000); // khôi phục về thời gian ban đầu
+      animationIntervals.push(petalInterval);
+      for (let i=0;i<2;i++) setTimeout(spawnPetal, i*800);
+    })();
+
+    
+
+    // slightly warm up the number glow more when page visible
+    (function(){
+      const nums = document.querySelectorAll('.count-num');
+      nums.forEach(n=> n.style.transition = 'box-shadow 280ms ease, transform 280ms ease');
+      setInterval(()=>{ const i = Math.floor(Math.random()*nums.length); const el = nums[i]; if (!el) return; el.style.transform='translateY(-6px) scale(1.02)'; el.style.boxShadow='0 14px 40px rgba(255,160,64,0.18)'; setTimeout(()=>{ el.style.transform=''; el.style.boxShadow=''; }, 900); }, 2000);
+    })();
+
+    // Music control functionality
+    let musicState = 0; // 0: off, 1: Tham Co Tri, 2: Tet
+    const songs = [
+      { name: '🔇 Tắt nhạc', file: '', iconType: 'off' },
+      { name: '🎵 Thành Bảo', file: 'audio/thanhbao.mp3', iconType: 'music' },
+      { name: '🏮 Nhạc Tết', file: 'audio/tet.mp3', iconType: 'tet' }
+    ];
+    
+    const musicBtn = document.getElementById('musicBtn');
+    const musicNote = document.getElementById('musicNote');
+    const playMusicIcon = document.getElementById('playMusicIcon');
+    const playTetIcon = document.getElementById('playTetIcon');
+    const musicPulse = document.getElementById('musicPulse');
+    const musicPrompt = document.getElementById('musicPrompt');
+    const audio = document.getElementById('tetMusic');
+    const audioSource = document.getElementById('audioSource');
+
+    // Update play button icon based on current state
+    function updatePlayIcon() {
+      if (musicState === 0) {
+        // Off state - no icon visible
+        musicNote.style.opacity = '0';
+        musicBtn.title = 'Bật nhạc Tết';
+      } else {
+        musicNote.style.opacity = '1';
+        const currentSong = songs[musicState];
+        if (currentSong.iconType === 'music') {
+          playMusicIcon.style.display = 'block';
+          playTetIcon.style.display = 'none';
+        } else {
+          playMusicIcon.style.display = 'none';
+          playTetIcon.style.display = 'block';
+        }
+        musicBtn.title = 'Chuyển bài/Tắt nhạc';
+      }
+    }
+
+    function toggleMusic() {
+      // Cycle through states: Off -> Tham Co Tri -> Tet -> Off
+      musicState = (musicState + 1) % 3;
+      
+      // Stop current music
+      audio.pause();
+      
+      if (musicState === 0) {
+        // Turn off
+        musicNote.style.opacity = '0';
+        musicBtn.style.transform = 'scale(1)';
+        musicPulse.style.display = 'block';
+        musicPrompt.style.opacity = '0';
+        musicPrompt.style.transform = 'translateY(10px)';
+      } else {
+        // Play new song - always set source regardless of previous state
+        audioSource.src = songs[musicState].file;
+        audio.load();
+        
+        audio.play().then(() => {
+          musicNote.style.opacity = '1';
+          musicBtn.style.transform = 'scale(0.95)';
+          musicPulse.style.display = 'none';
+          musicPrompt.style.opacity = '0';
+          musicPrompt.style.transform = 'translateY(10px)';
+        }).catch(e => {
+          console.log('Audio play failed:', e);
+          // Don't reset to 0, just show error
+          alert('Không thể phát nhạc. Vui lòng kiểm tra file audio.');
+        });
+      }
+      
+      updatePlayIcon();
+    }
+
+    // Initialize music when DOM is loaded
+    window.addEventListener('DOMContentLoaded', () => {
+      musicState = 1; // Start with Tham Co Tri
+      audioSource.src = songs[musicState].file;
+      audio.load();
+      updatePlayIcon();
+      
+      // Try autoplay
+      audio.play().then(() => {
+        musicNote.style.opacity = '1';
+        musicBtn.style.transform = 'scale(0.95)';
+        musicPulse.style.display = 'none';
+      }).catch(e => {
+        console.log('Autoplay prevented by browser:', e);
+        musicState = 0; // Reset to off
+        audioSource.src = ''; // Clear source
+        updatePlayIcon();
+        // Show prompt
+        setTimeout(() => {
+          if (musicState === 0) {
+            musicPrompt.style.opacity = '1';
+            musicPrompt.style.transform = 'translateY(0)';
+            musicPulse.style.display = 'block';
+            setTimeout(() => {
+              musicPrompt.style.opacity = '0';
+              musicPrompt.style.transform = 'translateY(10px)';
+            }, 5000);
+          }
+        }, 1000);
+      });
+    });
+
+    // Add hover effects
+    musicBtn.addEventListener('mouseenter', () => {
+      if (musicState === 0) {
+        musicBtn.style.transform = 'scale(1.1)';
+      }
+    });
+
+    musicBtn.addEventListener('mouseleave', () => {
+      if (musicState === 0) {
+        musicBtn.style.transform = 'scale(1)';
+      }
+    });
+  </script>
+</body>
+</html>
